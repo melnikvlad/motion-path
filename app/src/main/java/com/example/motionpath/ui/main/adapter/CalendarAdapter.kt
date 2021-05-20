@@ -1,5 +1,6 @@
 package com.example.motionpath.ui.main.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -45,7 +46,7 @@ val DIFF_CALLBACK = object : DiffUtil.ItemCallback<CalendarDay>() {
 
 }
 
-fun Date.toStringFormat(stringFormat: String = "dd-MM-yyyy"): String {
+fun Date.toStringFormat(stringFormat: String = "dd-MM-yyyy hh:mm:ss"): String {
     val dateFormat = SimpleDateFormat(stringFormat, Locale.getDefault())
     return try {
         dateFormat.format(this)
@@ -53,4 +54,15 @@ fun Date.toStringFormat(stringFormat: String = "dd-MM-yyyy"): String {
         e.printStackTrace()
         "N/A"
     }
+}
+
+@SuppressLint("SimpleDateFormat")
+fun String.toDate(): Date? {
+    val format = SimpleDateFormat("dd-MM-yyyy hh:mm:ss")
+    try {
+        return format.parse(this)
+    } catch (e: ParseException) {
+        e.printStackTrace()
+    }
+    return null
 }
