@@ -13,10 +13,5 @@ class CalendarRepository {
         const val PAGE_SIZE = 30
     }
 
-    fun getCalendarDays(startDate: Date) : Flow<PagingData<CalendarDay>> {
-        return Pager(
-            config = PagingConfig(pageSize = PAGE_SIZE / 3, enablePlaceholders = false),
-            pagingSourceFactory = { CalendarPagingSource(startDate) }
-        ).flow
-    }
+
 }

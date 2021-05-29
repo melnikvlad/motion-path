@@ -2,7 +2,7 @@ package com.example.motionpath.model.entity
 
 import androidx.room.*
 import com.example.motionpath.model.CalendarDay
-import com.example.motionpath.ui.main.adapter.toStringFormat
+import com.example.motionpath.util.toStringFormat
 import java.util.*
 
 @Entity(tableName = "clients")

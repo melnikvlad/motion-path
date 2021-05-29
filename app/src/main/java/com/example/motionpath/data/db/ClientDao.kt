@@ -6,13 +6,17 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.motionpath.model.entity.ClientEntity
 import kotlinx.coroutines.flow.Flow
+import java.util.*
 
 @Dao
 interface ClientDao {
 
     @Query("SELECT * FROM clients")
-    fun getAllClients(): Flow<List<ClientEntity>>
+    fun get(): Flow<List<ClientEntity>>
+
+    @Query("SELECT * FROM clients WHERE date == :date")
+    fun get(date: Date): Flow<List<ClientEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertClient(client: ClientEntity)
+    suspend fun insert(client: ClientEntity)
 }

@@ -1,43 +1,72 @@
 package com.example.motionpath.ui.main
 
 import androidx.lifecycle.*
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.example.motionpath.data.CalendarRepository
+import androidx.paging.cachedIn
+import com.example.motionpath.data.CalendarPagingSource
+import com.example.motionpath.data.CalendarRepository.Companion.PAGE_SIZE
 import com.example.motionpath.data.db.ClientDao
 import com.example.motionpath.model.CalendarDay
 import com.example.motionpath.model.entity.ClientEntity
 import com.example.motionpath.util.Logger
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
+import com.example.motionpath.util.isSameDay
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.util.*
 
 class MainViewModel(private val clientDao: ClientDao) : ViewModel() {
 
+    val today = GregorianCalendar().time
+
+    private val _selectedDate: MutableStateFlow<Date> = MutableStateFlow(today)
+    val selectedDate = _selectedDate.asLiveData()
+
     private val _calendarDays: MutableLiveData<PagingData<CalendarDay>> = MutableLiveData()
     val calendarDays = _calendarDays
 
-    private val repository = CalendarRepository()
-
-    private val clientsFlow = clientDao.getAllClients()
-
+    @ExperimentalCoroutinesApi
+    private val clientsFlow = _selectedDate.flatMapLatest { date ->
+        clientDao.get().map { list ->
+            list.filter { it.calendarDay.isSameDay(date) }
+        }
+    }
+    @ExperimentalCoroutinesApi
     val clients = clientsFlow.asLiveData()
 
+    private val calendarPagingSource = CalendarPagingSource(today)
+    private val calendarDaysFlow: Flow<PagingData<CalendarDay>> = Pager(
+        config = getCalendarPagingConfig(),
+        pagingSourceFactory = { calendarPagingSource }
+    ).flow.cachedIn(viewModelScope)
+
     init {
-        loadCalendar(date = GregorianCalendar().time)
+        loadCalendar()
     }
 
-    private fun loadCalendar(date: Date) {
+    private fun loadCalendar() {
         viewModelScope.launch {
-            repository.getCalendarDays(date)
+            calendarDaysFlow
                 .catch { Logger.log(it) }
                 .collect { _calendarDays.value = it }
         }
     }
 
-    fun createClient() {
+    fun createSession(date: Date) {
         viewModelScope.launch {
-            clientDao.insertClient(ClientEntity(null,"Vlad", "Melnikov", GregorianCalendar().time))
+            clientDao.insert(ClientEntity(null, "Vlad", "Melnikov", date))
         }
+    }
+
+    fun selectDate(newSelectedDate: Date) {
+        viewModelScope.launch {
+            _selectedDate.emit(newSelectedDate)
+        }
+    }
+
+    private fun getCalendarPagingConfig(): PagingConfig {
+        return PagingConfig(pageSize = PAGE_SIZE / 3, enablePlaceholders = false)
     }
 }
