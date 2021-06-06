@@ -1,17 +1,17 @@
-package com.example.motionpath.ui.main
+package com.example.motionpath.ui.schedule
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.motionpath.domain.usecase.CreateSessionUseCase
 import com.example.motionpath.domain.usecase.DeleteSessionUseCase
 import com.example.motionpath.domain.usecase.GetSessionsUseCase
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
-class MainViewModelFactory(
+@ExperimentalCoroutinesApi
+class ScheduleViewModelFactory(
     private val getSessionsUseCase: GetSessionsUseCase,
-    private val createSessionUseCase: CreateSessionUseCase,
     private val deleteSessionUseCase: DeleteSessionUseCase
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return MainViewModel(getSessionsUseCase, createSessionUseCase, deleteSessionUseCase) as T
+        return ScheduleViewModel(getSessionsUseCase, deleteSessionUseCase) as T
     }
 }

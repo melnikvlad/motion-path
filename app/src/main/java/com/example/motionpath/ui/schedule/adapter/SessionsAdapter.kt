@@ -1,4 +1,4 @@
-package com.example.motionpath.ui.main.adapter
+package com.example.motionpath.ui.schedule.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -7,13 +7,11 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.motionpath.R
 import com.example.motionpath.model.domain.Session
 import com.example.motionpath.util.CalendarManager
-import com.example.motionpath.util.extension.gone
 import com.example.motionpath.util.extension.setVisible
 import com.example.motionpath.util.extension.setVisibleOrHide
 import com.example.motionpath.util.toStringFormat

@@ -1,4 +1,4 @@
-package com.example.motionpath.ui.main.adapter
+package com.example.motionpath.ui.schedule.adapter
 
 import androidx.recyclerview.widget.DiffUtil
 import com.example.motionpath.model.domain.Session

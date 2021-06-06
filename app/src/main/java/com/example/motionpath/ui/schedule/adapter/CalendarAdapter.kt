@@ -1,4 +1,4 @@
-package com.example.motionpath.ui.main.adapter
+package com.example.motionpath.ui.schedule.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.motionpath.R
 import com.example.motionpath.model.CalendarDay
-import com.example.motionpath.model.domain.Session
 import com.example.motionpath.util.getMonthDay
 import com.example.motionpath.util.getWeekDay
 import com.example.motionpath.util.isToday

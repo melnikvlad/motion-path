@@ -1,4 +1,4 @@
-package com.example.motionpath.ui.main
+package com.example.motionpath.ui.schedule
 
 import androidx.lifecycle.*
 import androidx.paging.Pager
@@ -7,13 +7,10 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.example.motionpath.data.calendar.CalendarPagingSource
 import com.example.motionpath.data.calendar.CalendarRepository.Companion.PAGE_SIZE
-import com.example.motionpath.domain.usecase.CreateSessionUseCase
 import com.example.motionpath.domain.usecase.DeleteSessionUseCase
 import com.example.motionpath.domain.usecase.GetSessionsUseCase
 import com.example.motionpath.model.CalendarDay
 import com.example.motionpath.model.domain.Session
-import com.example.motionpath.model.domain.SessionClient
-import com.example.motionpath.model.domain.SessionTime
 import com.example.motionpath.util.Logger
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
@@ -21,9 +18,8 @@ import kotlinx.coroutines.launch
 import java.util.*
 
 @ExperimentalCoroutinesApi
-class MainViewModel(
+class ScheduleViewModel(
     private val getSessionsUseCase: GetSessionsUseCase,
-    private val createSessionUseCase: CreateSessionUseCase,
     private val deleteSessionUseCase: DeleteSessionUseCase
 ) : ViewModel() {
     val today: Date = GregorianCalendar().time

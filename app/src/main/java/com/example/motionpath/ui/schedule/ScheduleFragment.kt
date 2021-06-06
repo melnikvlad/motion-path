@@ -1,4 +1,4 @@
-package com.example.motionpath.ui.main
+package com.example.motionpath.ui.schedule
 
 import android.content.Context
 import android.content.res.Resources
@@ -7,22 +7,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.motionpath.MainActivity
 import com.example.motionpath.R
 import com.example.motionpath.data.db.AppDatabase
 import com.example.motionpath.data.session.SessionRepositoryImpl
-import com.example.motionpath.domain.usecase.CreateSessionUseCase
 import com.example.motionpath.domain.usecase.DeleteSessionUseCase
 import com.example.motionpath.domain.usecase.GetSessionsUseCase
 import com.example.motionpath.model.CalendarDay
 import com.example.motionpath.model.domain.Session
-import com.example.motionpath.ui.main.adapter.CalendarAdapter
-import com.example.motionpath.ui.main.adapter.SessionsAdapter
+import com.example.motionpath.ui.base.BaseFragment
+import com.example.motionpath.ui.schedule.adapter.CalendarAdapter
+import com.example.motionpath.ui.schedule.adapter.SessionsAdapter
 import com.example.motionpath.util.CalendarManager
 import com.example.motionpath.util.DialogHelpers
 import com.example.motionpath.util.toStringFormat
@@ -31,9 +29,9 @@ import java.util.*
 
 
 @ExperimentalCoroutinesApi
-class MainFragment : Fragment() {
+class ScheduleFragment : BaseFragment(R.layout.fragment_schedule) {
 
-    private lateinit var viewModel: MainViewModel
+    private lateinit var viewModel: ScheduleViewModel
     private lateinit var calendarAdapter: CalendarAdapter
     private lateinit var sessionsAdapter: SessionsAdapter
 
@@ -49,13 +47,12 @@ class MainFragment : Fragment() {
         val sessionDao = AppDatabase.getInstance(requireContext()).sessionDao()
         val sessionRepository = SessionRepositoryImpl(sessionDao)
         val getSessionsUseCase = GetSessionsUseCase(sessionRepository)
-        val createSessionUseCase = CreateSessionUseCase(sessionRepository)
         val deleteSessionUseCase = DeleteSessionUseCase(sessionRepository)
 
         viewModel = ViewModelProvider(
                 this,
-                MainViewModelFactory(getSessionsUseCase, createSessionUseCase, deleteSessionUseCase)
-            ).get(MainViewModel::class.java)
+                ScheduleViewModelFactory(getSessionsUseCase, deleteSessionUseCase)
+            ).get(ScheduleViewModel::class.java)
 
         calendarAdapter = CalendarAdapter(
             requireContext(),
@@ -68,12 +65,8 @@ class MainFragment : Fragment() {
         sessionsAdapter = SessionsAdapter(requireContext(), onDeleteSession = ::onSessionLongClick)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_main, container, false)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         rvCalendarDays = view.findViewById(R.id.rv_calendar_days)
         rvSessions = view.findViewById(R.id.rv_sessions)
@@ -81,18 +74,9 @@ class MainFragment : Fragment() {
         tvAddSession = view.findViewById(R.id.tv_add_session)
 
         tvAddSession.setOnClickListener {
-            (requireActivity() as MainActivity).navController.navigate(R.id.navigation_create_session)
-//           DialogHelpers.showDatePickerDialog(
-//               requireContext(),
-//               currentDate ?: viewModel.today,
-//               onDateSelectedCallback = { viewModel.createSessionAt(date = it) })
+            navigate(requireActivity(), R.id.action_navigation_main_to_navigation_create_session)
         }
 
-        return view
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         initViews()
         observe()
     }
