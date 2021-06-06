@@ -1,4 +1,4 @@
-package com.example.motionpath.data
+package com.example.motionpath.data.calendar
 
 import androidx.paging.Pager
 import androidx.paging.PagingConfig

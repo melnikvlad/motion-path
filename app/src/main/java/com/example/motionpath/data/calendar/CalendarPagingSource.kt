@@ -1,8 +1,8 @@
-package com.example.motionpath.data
+package com.example.motionpath.data.calendar
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.example.motionpath.data.CalendarRepository.Companion.PAGE_SIZE
+import com.example.motionpath.data.calendar.CalendarRepository.Companion.PAGE_SIZE
 import com.example.motionpath.model.CalendarDay
 import com.example.motionpath.util.CalendarManager
 import java.util.*

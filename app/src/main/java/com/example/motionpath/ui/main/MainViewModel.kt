@@ -5,21 +5,28 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.example.motionpath.data.CalendarPagingSource
-import com.example.motionpath.data.CalendarRepository.Companion.PAGE_SIZE
-import com.example.motionpath.data.db.ClientDao
+import com.example.motionpath.data.calendar.CalendarPagingSource
+import com.example.motionpath.data.calendar.CalendarRepository.Companion.PAGE_SIZE
+import com.example.motionpath.domain.usecase.CreateSessionUseCase
+import com.example.motionpath.domain.usecase.DeleteSessionUseCase
+import com.example.motionpath.domain.usecase.GetSessionsUseCase
 import com.example.motionpath.model.CalendarDay
-import com.example.motionpath.model.entity.ClientEntity
+import com.example.motionpath.model.domain.Session
+import com.example.motionpath.model.domain.SessionClient
+import com.example.motionpath.model.domain.SessionTime
 import com.example.motionpath.util.Logger
-import com.example.motionpath.util.isSameDay
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.util.*
 
-class MainViewModel(private val clientDao: ClientDao) : ViewModel() {
-
-    val today = GregorianCalendar().time
+@ExperimentalCoroutinesApi
+class MainViewModel(
+    private val getSessionsUseCase: GetSessionsUseCase,
+    private val createSessionUseCase: CreateSessionUseCase,
+    private val deleteSessionUseCase: DeleteSessionUseCase
+) : ViewModel() {
+    val today: Date = GregorianCalendar().time
 
     private val _selectedDate: MutableStateFlow<Date> = MutableStateFlow(today)
     val selectedDate = _selectedDate.asLiveData()
@@ -27,16 +34,11 @@ class MainViewModel(private val clientDao: ClientDao) : ViewModel() {
     private val _calendarDays: MutableLiveData<PagingData<CalendarDay>> = MutableLiveData()
     val calendarDays = _calendarDays
 
-    @ExperimentalCoroutinesApi
-    private val clientsFlow = _selectedDate.flatMapLatest { date ->
-        clientDao.get().map { list ->
-            list.filter { it.calendarDay.isSameDay(date) }
-        }
-    }
-    @ExperimentalCoroutinesApi
-    val clients = clientsFlow.asLiveData()
+    private val sessionsFlow = _selectedDate.flatMapLatest { getSessionsUseCase(it) }
+    val sessions = sessionsFlow.asLiveData()
 
-    private val calendarPagingSource = CalendarPagingSource(today)
+    private val calendarPagingSource =
+        CalendarPagingSource(today)
     private val calendarDaysFlow: Flow<PagingData<CalendarDay>> = Pager(
         config = getCalendarPagingConfig(),
         pagingSourceFactory = { calendarPagingSource }
@@ -54,9 +56,9 @@ class MainViewModel(private val clientDao: ClientDao) : ViewModel() {
         }
     }
 
-    fun createSession(date: Date) {
+    fun deleteSession(session: Session) {
         viewModelScope.launch {
-            clientDao.insert(ClientEntity(null, "Vlad", "Melnikov", date))
+            deleteSessionUseCase(session)
         }
     }
 

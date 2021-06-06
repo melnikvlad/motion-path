@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "8f1135f2bada92c2cf4fcdfd917f61c8",
+    "identityHash": "2d0200d07683b0aed1f62f43c5fbdc5e",
     "entities": [
       {
-        "tableName": "clients",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT NOT NULL, `lastName` TEXT NOT NULL, `date` INTEGER NOT NULL)",
+        "tableName": "sessions",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `notifyEnabled` INTEGER NOT NULL, `sessionTime` TEXT NOT NULL, `sessionClient` TEXT, `sessionActivities` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -15,21 +15,27 @@
             "notNull": false
           },
           {
-            "fieldPath": "name",
-            "columnName": "name",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "lastName",
-            "columnName": "lastName",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "calendarDay",
-            "columnName": "date",
+            "fieldPath": "notifyEnabled",
+            "columnName": "notifyEnabled",
             "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "time",
+            "columnName": "sessionTime",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "client",
+            "columnName": "sessionClient",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "activities",
+            "columnName": "sessionActivities",
+            "affinity": "TEXT",
             "notNull": true
           }
         ],
@@ -46,7 +52,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8f1135f2bada92c2cf4fcdfd917f61c8')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '2d0200d07683b0aed1f62f43c5fbdc5e')"
     ]
   }
 }

@@ -5,14 +5,19 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.example.motionpath.model.entity.ClientEntity
-import com.example.motionpath.model.entity.DateConverter
+import com.example.motionpath.model.domain.SessionActivity
+import com.example.motionpath.model.entity.*
 import com.example.motionpath.util.DATABASE_NAME
 
-@Database(entities = arrayOf(ClientEntity::class), version = 1)
-@TypeConverters(DateConverter::class)
+@Database(entities = arrayOf(SessionEntity::class), version = 1)
+@TypeConverters(
+    DateConverter::class,
+    SessionTimeConverter::class,
+    SessionClientConverter::class,
+    SessionActivityConverter::class
+)
 abstract class AppDatabase : RoomDatabase() {
-    abstract fun clientDao(): ClientDao
+    abstract fun sessionDao(): SessionDao
 
     companion object {
         @Volatile private var instance: AppDatabase? = null

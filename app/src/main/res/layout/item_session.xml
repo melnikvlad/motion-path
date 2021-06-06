@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/constraint_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="@dimen/session_recycler_horizontal_margin">
+
+    <TextView
+        android:id="@+id/tv_time_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="08:00"
+        android:textColor="@color/black"
+        android:textSize="@dimen/middle_text_size"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/view_diveder_top"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginStart="@dimen/session_recycler_horizontal_margin"
+        android:layout_marginLeft="@dimen/session_recycler_horizontal_margin"
+        android:layout_marginTop="8dp"
+        android:background="@color/default_gray"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/tv_time_start"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/content"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/session_recycler_horizontal_margin"
+        android:layout_marginLeft="@dimen/session_recycler_horizontal_margin"
+        android:background="@color/default_gray"
+        android:orientation="vertical"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/tv_time_start"
+        app:layout_constraintTop_toBottomOf="@id/tv_time_start">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/inner_rv_vertical_margin"
+                android:layout_marginLeft="@dimen/inner_rv_vertical_margin"
+                android:layout_marginTop="@dimen/inner_rv_vertical_margin"
+                android:layout_marginEnd="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_toStartOf="@id/ll_more"
+                android:layout_toLeftOf="@id/ll_more"
+                android:textColor="@color/black"
+                android:textSize="@dimen/middle_text_size"
+                android:textStyle="bold"
+                tools:text="Vladislav Melnikov" />
+
+            <LinearLayout
+                android:id="@+id/ll_more"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_more_vert" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/tv_subtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/inner_rv_vertical_margin"
+            android:layout_marginLeft="@dimen/inner_rv_vertical_margin"
+            android:layout_marginTop="@dimen/inner_rv_vertical_margin"
+            android:layout_marginBottom="@dimen/inner_rv_vertical_margin"
+            android:textColor="@color/black"
+            android:textSize="@dimen/middle_text_size"
+            tools:text="5/10 Some long description right there" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_time_end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="10:00"
+        android:textColor="@color/black"
+        android:textSize="@dimen/middle_text_size"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/content" />
+
+    <View
+        android:id="@+id/view_diveder_bottom"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginStart="@dimen/session_recycler_horizontal_margin"
+        android:layout_marginLeft="@dimen/session_recycler_horizontal_margin"
+        android:layout_marginTop="8dp"
+        android:background="@color/default_gray"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/tv_time_end"
+        app:layout_constraintTop_toTopOf="@id/tv_time_end" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

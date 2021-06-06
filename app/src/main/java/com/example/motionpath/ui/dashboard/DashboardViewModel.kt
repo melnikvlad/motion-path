@@ -1,12 +1,9 @@
 package com.example.motionpath.ui.dashboard
 
 import androidx.lifecycle.*
-import com.example.motionpath.data.db.ClientDao
-import com.example.motionpath.model.entity.ClientEntity
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
+import com.example.motionpath.data.db.SessionDao
 
-class DashboardViewModel(private val clientDao: ClientDao) : ViewModel() {
+class DashboardViewModel(private val sessionDao: SessionDao) : ViewModel() {
 
     private val _text = MutableLiveData<String>().apply {
         value = "This is dashboard Fragment"

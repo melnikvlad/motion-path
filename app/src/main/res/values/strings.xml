@@ -4,7 +4,24 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+    <string name="title_create_session">Create session</string>
 
     <string name="main_add_session">Add</string>
+
+    <string name="menu_session_edit">Edit</string>
+    <string name="menu_session_notification">Enable notification</string>
+    <string name="menu_session_delete">Delete</string>
+    <string name="menu_session_change_date">Change date and time</string>
+
+    <string name="name_pattern">%1$s %2$s</string>
+
+    <string name="create_session_edittext_hint_name">Name</string>
+    <string name="create_session_edittext_hint_date">Date</string>
+    <string name="create_session_edittext_hint_time">Time</string>
+    <string name="create_session_edittext_hint_description">Description</string>
+    <string name="create_session_edittext_hint_goal">Goal</string>
+    <string name="create_session_activity">New Activity</string>
+
+    <string name="action_save">Sava and Apply</string>
 
 </resources>

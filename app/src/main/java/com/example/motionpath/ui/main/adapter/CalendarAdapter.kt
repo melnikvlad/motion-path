@@ -1,6 +1,5 @@
 package com.example.motionpath.ui.main.adapter
 
-import android.app.Activity
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -14,14 +13,11 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.motionpath.R
 import com.example.motionpath.model.CalendarDay
-import com.example.motionpath.util.DeviceUtils
+import com.example.motionpath.model.domain.Session
 import com.example.motionpath.util.getMonthDay
 import com.example.motionpath.util.getWeekDay
 import com.example.motionpath.util.isToday
 import java.util.*
-import kotlin.collections.ArrayList
-
-const val DEFAULT_SELECTED_POS = -1
 
 class CalendarAdapter(
     private val context: Context,
@@ -41,13 +37,13 @@ class CalendarAdapter(
     }
 
     override fun onBindViewHolder(holder: CalendarAdapter.CalendarDayVH, position: Int) {
-        getItem(position)?.let {
-            holder.bind(it)
-            holder.itemView.setOnClickListener { _ ->
-                getSelectedItemPos()?.let {
-                    getItem(it)?.isSelected = false
+        getItem(position)?.let { item ->
+            holder.bind(item)
+            holder.itemView.setOnClickListener {
+                getSelectedItemPos()?.let { pos ->
+                    getItem(pos)?.isSelected = false
                 }
-                onCalendarDayClick.invoke(it)
+                onCalendarDayClick.invoke(item)
             }
         }
     }
@@ -77,7 +73,8 @@ class CalendarAdapter(
                 }
 
                 item.date.isToday() -> {
-                    circle.background = ContextCompat.getDrawable(context, R.drawable.black_border_circle)
+                    circle.background =
+                        ContextCompat.getDrawable(context, R.drawable.black_border_circle)
                     tvMonthDay.setTextColor(ContextCompat.getColor(context, R.color.black))
                 }
 
@@ -89,7 +86,8 @@ class CalendarAdapter(
         }
     }
 
-    fun getSelectedItemPos(): Int? = this.snapshot().items.indexOfFirst { it.isSelected }.takeIf { it != -1 }
+    fun getSelectedItemPos(): Int? =
+        this.snapshot().items.indexOfFirst { it.isSelected }.takeIf { it != -1 }
 
     fun setSelectedDate(selectedDate: Date) {
         this.selectedDate = selectedDate
