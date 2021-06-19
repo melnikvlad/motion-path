@@ -40,6 +40,21 @@ class GetSessionsUseCase(private val sessionRepository: SessionRepository) {
                 sessions[index + 1]
             } else {
                 schedule.add(SessionUI(session, canShowTime = true))
+                CalendarManager.getHoursBetweenDates(sessions.last().time.finish, date.getEndOfWorkDay()).forEach {
+                    val sessionUI = SessionUI(
+                        session = Session(
+                            null,
+                            SessionType.FREE,
+                            false,
+                            SessionTime(start = it, finish = it),
+                            null
+                        ),
+                        canShowTime = true
+                    )
+                    freeSessionTimes.add(sessionUI)
+                }
+
+                schedule.addAll(freeSessionTimes)
                 return schedule
             }
 
@@ -58,6 +73,7 @@ class GetSessionsUseCase(private val sessionRepository: SessionRepository) {
                 )
                 freeSessionTimes.add(sessionUI)
             }
+            freeSessionTimes.last().canShowTime = false
             schedule.add(SessionUI(session, canShowTime = true))
             schedule.addAll(freeSessionTimes)
             freeSessionTimes.clear()
