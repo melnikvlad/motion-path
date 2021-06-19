@@ -1,7 +1,8 @@
 package com.example.motionpath.ui
 
 import android.os.Bundle
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import android.view.Gravity
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
@@ -10,6 +11,8 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.motionpath.R
 import com.example.motionpath.util.extension.setVisible
+import com.google.android.material.bottomnavigation.BottomNavigationView
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -26,7 +29,8 @@ class MainActivity : AppCompatActivity() {
             setOf(
                 R.id.navigation_schedule,
                 R.id.navigation_exercise,
-                R.id.navigation_clients
+                R.id.navigation_clients,
+                R.id.navigation_profile
             )
         )
         setupActionBarWithNavController(navController, appBarConfiguration)

@@ -22,7 +22,7 @@
     <string name="create_session_edittext_hint_time">Time</string>
     <string name="create_session_edittext_hint_description">Description</string>
     <string name="create_session_edittext_hint_goal">Goal</string>
-    <string name="create_session_activity">New Activity</string>
+    <string name="create_session_exercise">New Exercise</string>
 
     <string name="action_save">Sava and Apply</string>
 

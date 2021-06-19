@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,6 +19,7 @@ import com.example.motionpath.domain.usecase.DeleteSessionUseCase
 import com.example.motionpath.domain.usecase.GetSessionsUseCase
 import com.example.motionpath.model.CalendarDay
 import com.example.motionpath.model.domain.Session
+import com.example.motionpath.model.domain.SessionUI
 import com.example.motionpath.ui.base.BaseFragment
 import com.example.motionpath.ui.schedule.adapter.CalendarAdapter
 import com.example.motionpath.ui.schedule.adapter.SessionsAdapter
@@ -30,6 +32,10 @@ import java.util.*
 
 @ExperimentalCoroutinesApi
 class ScheduleFragment : BaseFragment(R.layout.fragment_schedule) {
+
+    companion object {
+        const val KEY_SELECTED_DATE = "selected date"
+    }
 
     private lateinit var viewModel: ScheduleViewModel
     private lateinit var calendarAdapter: CalendarAdapter
@@ -74,7 +80,8 @@ class ScheduleFragment : BaseFragment(R.layout.fragment_schedule) {
         tvAddSession = view.findViewById(R.id.tv_add_session)
 
         tvAddSession.setOnClickListener {
-            navigate(requireActivity(), R.id.action_navigation_main_to_navigation_create_session)
+            val bundle = bundleOf(KEY_SELECTED_DATE to currentDate)
+            navigate(requireActivity(), R.id.action_navigation_main_to_navigation_create_session, bundle)
         }
 
         initViews()
@@ -108,14 +115,14 @@ class ScheduleFragment : BaseFragment(R.layout.fragment_schedule) {
         calendarAdapter.notifyDataSetChanged()
     }
 
-    private fun onSessionLongClick(session: Session, anchor: View) {
+    private fun onSessionLongClick(sessionUI: SessionUI, anchor: View) {
         DialogHelpers.showPopupMenu(
             requireContext(),
             R.menu.menu_session_options,
             anchor,
             onMenuEditClick = {},
             onMenuNotificationClick = {},
-            onMenuDeleteClick = { viewModel.deleteSession(session) },
+            onMenuDeleteClick = { viewModel.deleteSession(sessionUI.session) },
             onMenuChangeDateClick = {}
         )
     }

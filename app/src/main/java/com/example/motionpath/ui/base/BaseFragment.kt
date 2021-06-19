@@ -1,6 +1,7 @@
 package com.example.motionpath.ui.base
 
 import android.app.Activity
+import android.os.Bundle
 import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
@@ -12,8 +13,8 @@ import com.google.android.material.snackbar.Snackbar
 
 abstract class BaseFragment(@LayoutRes layoutId : Int = 0) : Fragment(layoutId) {
 
-    protected fun navigate(activity: Activity, @IdRes actionId: Int) {
-        (activity as? MainActivity)?.navController?.navigate(actionId)
+    protected fun navigate(activity: Activity, @IdRes actionId: Int, bundle: Bundle? = null) {
+        (activity as? MainActivity)?.navController?.navigate(actionId, bundle)
             ?: throw IllegalArgumentException("$activity cannot be null, while executing: $actionId")
     }
 

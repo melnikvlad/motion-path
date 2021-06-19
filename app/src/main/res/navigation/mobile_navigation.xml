@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/navigation_schedule"
         android:name="com.example.motionpath.ui.schedule.ScheduleFragment"
-        android:label="@string/title_main"
+        android:label="@string/title_schedule"
         tools:layout="@layout/fragment_schedule">
         <action
             android:id="@+id/action_navigation_main_to_navigation_create_session"
@@ -32,10 +32,20 @@
     </fragment>
 
     <fragment
+        android:id="@+id/navigation_clients"
+        android:name="com.example.motionpath.ui.clients.ClientsFragment"
+        android:label="ClientsFragment">
+        <action
+            android:id="@+id/action_clientsFragment_to_searchFragment"
+            app:destination="@id/searchFragment" />
+    </fragment>
+
+    <fragment
         android:id="@+id/navigation_create_session"
         android:name="com.example.motionpath.ui.create_session.CreateSessionFragment"
         android:label="@string/title_create_session"
         tools:layout="@layout/fragment_create_session" />
+
     <fragment
         android:id="@+id/searchFragment"
         android:name="com.example.motionpath.ui.search.SearchFragment"
@@ -44,20 +54,15 @@
             android:id="@+id/action_searchFragment_to_navigation_create_session"
             app:destination="@id/navigation_create_session" />
     </fragment>
+
     <fragment
         android:id="@+id/createExerciseFragment"
         android:name="com.example.motionpath.ui.create_exercise.CreateExerciseFragment"
         android:label="CreateExerciseFragment" />
+
     <fragment
-        android:id="@+id/clientsFragment"
-        android:name="com.example.motionpath.ui.clients.ClientsFragment"
-        android:label="ClientsFragment">
-        <action
-            android:id="@+id/action_clientsFragment_to_searchFragment"
-            app:destination="@id/searchFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/profileFragment"
+        android:id="@+id/navigation_profile"
         android:name="com.example.motionpath.ui.profile.ProfileFragment"
         android:label="ProfileFragment" />
+
 </navigation>

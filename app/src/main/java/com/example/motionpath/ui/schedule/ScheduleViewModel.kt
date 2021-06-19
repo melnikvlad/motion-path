@@ -22,7 +22,7 @@ class ScheduleViewModel(
     private val getSessionsUseCase: GetSessionsUseCase,
     private val deleteSessionUseCase: DeleteSessionUseCase
 ) : ViewModel() {
-    val today: Date = GregorianCalendar().time
+    val today: Date = Calendar.getInstance().time
 
     private val _selectedDate: MutableStateFlow<Date> = MutableStateFlow(today)
     val selectedDate = _selectedDate.asLiveData()
@@ -33,8 +33,7 @@ class ScheduleViewModel(
     private val sessionsFlow = _selectedDate.flatMapLatest { getSessionsUseCase(it) }
     val sessions = sessionsFlow.asLiveData()
 
-    private val calendarPagingSource =
-        CalendarPagingSource(today)
+    private val calendarPagingSource = CalendarPagingSource(today)
     private val calendarDaysFlow: Flow<PagingData<CalendarDay>> = Pager(
         config = getCalendarPagingConfig(),
         pagingSourceFactory = { calendarPagingSource }
@@ -52,9 +51,11 @@ class ScheduleViewModel(
         }
     }
 
-    fun deleteSession(session: Session) {
-        viewModelScope.launch {
-            deleteSessionUseCase(session)
+    fun deleteSession(session: Session?) {
+        session?.let {
+            viewModelScope.launch {
+                deleteSessionUseCase(it)
+            }
         }
     }
 

@@ -30,6 +30,7 @@ data class SessionClient(
     val lastName: String,
     val type: Int,
     val comment: String? = null,
+    val goal: String? = null,
     val sessionsPassed: Int = 0,
     val packageSessionsCount: Int? = null
 ) {
