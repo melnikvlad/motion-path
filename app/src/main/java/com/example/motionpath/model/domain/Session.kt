@@ -39,7 +39,7 @@ data class SessionClient(
 
 data class SessionActivity(val id: Int, val name: String, val type: Int)
 
-enum class SessionType {
-    FREE,
-    CLIENT
+enum class SessionType(val code: Int) {
+    FREE(0),
+    CLIENT(1)
 }

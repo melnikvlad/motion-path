@@ -2,10 +2,7 @@ package com.example.motionpath.domain.usecase
 
 import com.example.motionpath.domain.SessionRepository
 import com.example.motionpath.domain.mapper.SessionToDomainMapper
-import com.example.motionpath.model.domain.Session
-import com.example.motionpath.model.domain.SessionTime
-import com.example.motionpath.model.domain.SessionType
-import com.example.motionpath.model.domain.SessionUI
+import com.example.motionpath.model.domain.*
 import com.example.motionpath.model.entity.SessionEntity
 import com.example.motionpath.util.*
 import kotlinx.coroutines.flow.Flow
@@ -14,7 +11,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 class GetSessionsUseCase(private val sessionRepository: SessionRepository) {
-    operator fun invoke(date: Date): Flow<List<SessionUI>> {
+    operator fun invoke(date: Date): Flow<List<BaseSessionUI>> {
         return sessionRepository.getSessions()
             .map { filterBySelectedDate(it, date) }
             .map { sortByDate(it) }
@@ -30,28 +27,18 @@ class GetSessionsUseCase(private val sessionRepository: SessionRepository) {
         return list.sortedBy { session -> session.time.start }
     }
 
-    private fun createFreeSchedule(date: Date, sessions: List<Session>): List<SessionUI> {
-        val schedule = ArrayList<SessionUI>()
-        val freeSessionTimes = mutableListOf<SessionUI>()
+    private fun createFreeSchedule(date: Date, sessions: List<Session>): List<BaseSessionUI> {
+        val schedule = ArrayList<BaseSessionUI>()
+        val freeSessionTimes = mutableListOf<BaseSessionUI>()
 
         val size = sessions.size
         sessions.forEachIndexed { index, session ->
             val next = if (index + 1 < size) {
                 sessions[index + 1]
             } else {
-                schedule.add(SessionUI(session, canShowTime = true))
+                schedule.add(SessionUI(session))
                 CalendarManager.getHoursBetweenDates(sessions.last().time.finish, date.getEndOfWorkDay()).forEach {
-                    val sessionUI = SessionUI(
-                        session = Session(
-                            null,
-                            SessionType.FREE,
-                            false,
-                            SessionTime(start = it, finish = it),
-                            null
-                        ),
-                        canShowTime = true
-                    )
-                    freeSessionTimes.add(sessionUI)
+                    freeSessionTimes.add(FreeSessionUI(displayTime = true, time = it))
                 }
 
                 schedule.addAll(freeSessionTimes)
@@ -61,20 +48,10 @@ class GetSessionsUseCase(private val sessionRepository: SessionRepository) {
             val (start, end) = Pair(session.time.finish, next.time.start)
 
             CalendarManager.getHoursBetweenDates(start, end).forEach { date ->
-                val sessionUI = SessionUI(
-                    session = Session(
-                        null,
-                        SessionType.FREE,
-                        false,
-                        SessionTime(start = date, finish = date),
-                        null
-                    ),
-                    canShowTime = true
-                )
-                freeSessionTimes.add(sessionUI)
+                freeSessionTimes.add(FreeSessionUI(displayTime = true, time = date))
             }
-            freeSessionTimes.last().canShowTime = false
-            schedule.add(SessionUI(session, canShowTime = true))
+            freeSessionTimes.lastOrNull()?.canShowTime = false
+            schedule.add(SessionUI(session))
             schedule.addAll(freeSessionTimes)
             freeSessionTimes.clear()
         }

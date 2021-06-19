@@ -10,10 +10,10 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.motionpath.R
-import com.example.motionpath.model.domain.Session
-import com.example.motionpath.model.domain.SessionUI
+import com.example.motionpath.model.domain.*
 import com.example.motionpath.util.CalendarManager
 import com.example.motionpath.util.extension.setVisible
+import com.example.motionpath.util.extension.setVisibleOrGone
 import com.example.motionpath.util.extension.setVisibleOrHide
 import com.example.motionpath.util.toStringFormat
 
@@ -21,16 +21,20 @@ import com.example.motionpath.util.toStringFormat
 class SessionsAdapter(
     private val context: Context,
     private val onDeleteSession: (SessionUI, View) -> Unit
-) : ListAdapter<SessionUI, RecyclerView.ViewHolder>(SessionsDiffUtilCallback()) {
+) : ListAdapter<BaseSessionUI, RecyclerView.ViewHolder>(SessionsDiffUtilCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return SessionViewHolder.from(parent)
+        return when(viewType) {
+            SessionType.CLIENT.code -> SessionViewHolder.from(parent)
+            SessionType.FREE.code -> FreeSessionViewHolder.from(parent)
+            else -> throw IllegalArgumentException("Unknown ViewType: $viewType")
+        }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is SessionViewHolder -> {
-                val item = getItem(position)
+                val item = getItem(position) as SessionUI
                 holder.bind(context, item)
                 holder.viewMore.setOnClickListener { v ->
                     onDeleteSession.invoke(item, v)
@@ -40,13 +44,37 @@ class SessionsAdapter(
                     return@setOnLongClickListener true
                 }
             }
+            is FreeSessionViewHolder -> {
+                val item = getItem(position) as FreeSessionUI
+                holder.bind(context, item)
+            }
             else -> throw IllegalArgumentException("Unknown ViewHolder: $holder")
         }
     }
 
     override fun getItemCount() = currentList.size
 
-    fun getFirstClientPos() = currentList.indexOfFirst { !it.isFree() }
+    override fun getItemViewType(position: Int): Int {
+        return currentList[position].type.code
+    }
+
+    fun getFirstClientPos() = currentList.indexOfFirst { it.type == SessionType.CLIENT }
+}
+
+class FreeSessionViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    companion object {
+        fun from(parent: ViewGroup): FreeSessionViewHolder {
+            return FreeSessionViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_free_session, parent, false))
+        }
+    }
+
+    private val viewDivider: View = view.findViewById(R.id.view_divider)
+    private val tvTime: TextView = view.findViewById(R.id.tv_time)
+
+    fun bind(context: Context, item: FreeSessionUI) {
+        viewDivider.setVisibleOrGone(item.canShowTime)
+        tvTime.text = item.time?.toStringFormat(CalendarManager.HOUR_MiNUTE_FORMAT)
+    }
 }
 
 class SessionViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -68,24 +96,6 @@ class SessionViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
 
     fun bind(context: Context, item: SessionUI) {
-
-//        val constraintSet = ConstraintSet()
-//        constraintSet.clone(constraintLayout)
-//
-//        if (showStartTime) {
-//            constraintSet.connect(content.id, ConstraintSet.START, tvTimeStart.id, ConstraintSet.END, 12)
-//            constraintSet.connect(content.id, ConstraintSet.TOP, tvTimeStart.id, ConstraintSet.BOTTOM, 12)
-//        } else {
-//            constraintSet.connect(content.id, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START, 54)
-//            constraintSet.connect(content.id, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, 0)
-//        }
-//
-//        constraintLayout.setConstraintSet(constraintSet)
-
-        //viewDividerTop.setVisible(showStartTime)
-        //tvTimeStart.setVisible(showStartTime)
-//        viewDividerBottom.setVisible(showEndTime)
-//        tvTimeEnd.setVisible(showEndTime)
 
         content.setVisibleOrHide(!item.isFree())
 
