@@ -2,4 +2,16 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="inner_rv_vertical_margin">8dp</dimen>
+    <dimen name="session_recycler_horizontal_margin">12dp</dimen>
+    <dimen name="text_and_icon_padding">8dp</dimen>
+    <dimen name="big_vertical_margin">24dp</dimen>
+
+    <dimen name="black_button_height">48dp</dimen>
+
+    <dimen name="main_header_selected_date">24sp</dimen>
+    <dimen name="main_header_add_session">16sp</dimen>
+    <dimen name="default_corner_radius">4dp</dimen>
+
+    <dimen name="middle_text_size">14sp</dimen>
 </resources>
