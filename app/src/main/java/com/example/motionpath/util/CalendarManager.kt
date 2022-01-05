@@ -43,7 +43,7 @@ object CalendarManager {
 
         val endCalendar = GregorianCalendar()
         endCalendar.time = startDate
-        endCalendar.add(Calendar.DATE, count.unaryMinus())
+        endCalendar.add(Calendar.DATE, (count - 1).unaryMinus())
 
         while (startCalendar.after(endCalendar)) {
             datesInRange.add(CalendarDay(startCalendar.time))
@@ -117,7 +117,7 @@ fun Date.getStartOfWorkDay(): Date {
     return cal.time
 }
 
-fun Date.getEndOfWorkDay(): Date {
+fun Date.getEndOfDay(): Date {
     val cal = Calendar.getInstance()
     cal.time = this
     cal.set(Calendar.HOUR_OF_DAY, 23)
@@ -174,6 +174,25 @@ fun Date.plusHour(count: Int): Date {
     val calendar = Calendar.getInstance()
     calendar.time = this
     calendar.add(Calendar.HOUR_OF_DAY, count)
+    return calendar.time
+}
+
+fun Date.setDay(newDate: Date): Date {
+    val calendar = Calendar.getInstance()
+    calendar.time = this
+
+    val newCalendar = Calendar.getInstance()
+    newCalendar.time = newDate
+    newCalendar.set(Calendar.HOUR, calendar[Calendar.HOUR_OF_DAY])
+    newCalendar.set(Calendar.MINUTE, calendar[Calendar.MINUTE])
+    return newCalendar.time
+}
+
+fun Date.newTime(hour: Int, minutes: Int): Date {
+    val calendar = Calendar.getInstance()
+    calendar.time = this
+    calendar.set(Calendar.HOUR_OF_DAY, hour)
+    calendar.set(Calendar.MINUTE, minutes)
     return calendar.time
 }
 

@@ -9,4 +9,16 @@
     <color name="white">#FFFFFFFF</color>
 
     <color name="default_gray">#C4C4C4</color>
+
+    <color name="category_color_personal">#F0D8FF</color>
+    <color name="category_color_temp">#CCFCEF</color>
+    <color name="category_color_default">#E3E8FF</color>
+    <color name="category_color_out">#FFF5E1</color>
+    <color name="category_color_paused">#FFE2F3</color>
+
+    <color name="category_text_color_personal">#6F16A7</color>
+    <color name="category_text_color_temp">#107C5F</color>
+    <color name="category_text_color_default">#1B3AC7</color>
+    <color name="category_text_color_out">#CB8700</color>
+    <color name="category_text_color_paused">#DA0080</color>
 </resources>

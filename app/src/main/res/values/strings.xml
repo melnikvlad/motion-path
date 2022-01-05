@@ -17,13 +17,37 @@
 
     <string name="name_pattern">%1$s %2$s</string>
 
-    <string name="create_session_edittext_hint_name">Name</string>
-    <string name="create_session_edittext_hint_date">Date</string>
-    <string name="create_session_edittext_hint_time">Time</string>
-    <string name="create_session_edittext_hint_description">Description</string>
-    <string name="create_session_edittext_hint_goal">Goal</string>
-    <string name="create_session_exercise">New Exercise</string>
+    <string name="create_session_edittext_hint_name">ФИО</string>
+    <string name="create_session_edittext_hint_date">Дата</string>
+    <string name="create_session_edittext_hint_time">Начало</string>
+    <string name="create_session_edittext_hint_time_end">Конец</string>
+    <string name="create_session_edittext_hint_description">Описание</string>
+    <string name="create_session_edittext_hint_goal">Цель</string>
+    <string name="create_session_exercise">Добавить упражнение</string>
 
-    <string name="action_save">Sava and Apply</string>
+    <string name="action_save">Сохранить</string>
+
+    <string name="category_name_personal">Персоналки</string>
+    <string name="category_name_temp">Пробные</string>
+    <string name="category_name_default">Все клиенты</string>
+    <string name="category_name_out">Выбыли</string>
+    <string name="category_name_paused">Перерыв</string>
+
+    <string name="mock_exercise_1">Спина</string>
+    <string name="mock_exercise_2">Плечи</string>
+    <string name="mock_exercise_3">Грудь</string>
+    <string name="mock_exercise_4">Руки</string>
+    <string name="mock_exercise_5">Живот</string>
+    <string name="mock_exercise_6">Таз</string>
+    <string name="mock_exercise_7">Бедро</string>
+    <string name="mock_exercise_8">Голень</string>
+    <string name="mock_exercise_9">Шея</string>
+
+    <string name="mock_exercise_1_1">Становая тяга</string>
+    <string name="mock_exercise_1_2">Наклоны со штангой стоя</string>
+    <string name="mock_exercise_1_3">Тяга штанги на прямых ногах</string>
+    <string name="mock_exercise_1_4">Наклоны со штангой сидя</string>
+    <string name="mock_exercise_1_5">Геперэкстензия</string>
+    <string name="mock_exercise_1_6">Экстензия</string>
 
 </resources>

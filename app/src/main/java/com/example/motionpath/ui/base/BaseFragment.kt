@@ -11,7 +11,7 @@ import com.example.motionpath.util.Logger
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 
-abstract class BaseFragment(@LayoutRes layoutId : Int = 0) : Fragment(layoutId) {
+abstract class BaseFragment : Fragment() {
 
     protected fun navigate(activity: Activity, @IdRes actionId: Int, bundle: Bundle? = null) {
         (activity as? MainActivity)?.navController?.navigate(actionId, bundle)

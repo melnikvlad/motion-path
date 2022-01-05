@@ -10,7 +10,7 @@ import java.util.*
 class CalendarPagingSource(private val startingDate: Date) : PagingSource<Date, CalendarDay>() {
 
     private var prevKey: Date? = null
-    private var newxtKey: Date? = null
+    private var nextKey: Date? = null
 
     override suspend fun load(params: LoadParams<Date>): LoadResult<Date, CalendarDay> {
         val key = params.key ?: startingDate
@@ -19,12 +19,12 @@ class CalendarPagingSource(private val startingDate: Date) : PagingSource<Date, 
         val daysAfter = CalendarManager.getDaysAfter(key, PAGE_SIZE)
 
         prevKey = daysBefore.last().date
-        newxtKey = daysAfter.last().date
+        nextKey = daysAfter.last().date
 
         return LoadResult.Page(
             data = daysAfter,
             prevKey = prevKey,
-            nextKey = newxtKey
+            nextKey = nextKey
         )
     }
 

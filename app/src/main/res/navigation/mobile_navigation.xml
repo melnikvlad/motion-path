@@ -42,7 +42,7 @@
 
     <fragment
         android:id="@+id/navigation_create_session"
-        android:name="com.example.motionpath.ui.create_session.CreateSessionFragment"
+        android:name="com.example.motionpath.ui.create_train.CreateTrainFragment"
         android:label="@string/title_create_session"
         tools:layout="@layout/fragment_create_session" />
 

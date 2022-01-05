@@ -1,6 +1,7 @@
 package com.example.motionpath.ui.schedule.adapter
 
 import android.content.Context
+import android.content.res.Resources
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,11 +21,11 @@ import java.util.*
 
 class CalendarAdapter(
     private val context: Context,
-    private val screenWidth: Int,
     private val onCalendarDayClick: (CalendarDay) -> Unit
 ) : PagingDataAdapter<CalendarDay, CalendarAdapter.CalendarDayVH>(DIFF_CALLBACK) {
 
     private var selectedDate: Date? = null
+    private val screenWidth = Resources.getSystem().displayMetrics.widthPixels
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
