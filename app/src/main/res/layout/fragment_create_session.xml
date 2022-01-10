@@ -157,7 +157,7 @@
         app:layout_constraintTop_toBottomOf="@id/input_goal" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_activity"
+        android:id="@+id/rv_exercises"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="@dimen/inner_rv_vertical_margin"
@@ -181,7 +181,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/rv_activity"
+        app:layout_constraintTop_toBottomOf="@id/rv_exercises"
         tools:ignore="RtlSymmetry" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

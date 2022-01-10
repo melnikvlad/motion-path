@@ -10,10 +10,12 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.motionpath.R
 import com.example.motionpath.ui.MainActivity
 import com.example.motionpath.ui.base.BaseFragment
+import com.example.motionpath.ui.exercise.adapter.ExerciseAdapter
 import com.example.motionpath.util.CalendarManager
 import com.example.motionpath.util.DialogHelpers
 import com.example.motionpath.util.toStringFormat
@@ -57,6 +59,17 @@ class CreateTrainFragment : BaseFragment() {
     lateinit var assistedFactory: CreateTrainViewModelAssistedFactory
 
     private val viewModel: CreateTrainViewModel by viewModels { Factory(assistedFactory, requireArguments()) }
+    private val adapter: ExerciseAdapter by lazy(LazyThreadSafetyMode.NONE) {
+        ExerciseAdapter(
+            requireContext(),
+            onItemClick = {
+
+            },
+            onItemRemoveClick = {
+
+            }
+        )
+    }
 
     private lateinit var viewToolbar: Toolbar
     private lateinit var viewInputDate: TextInputLayout
@@ -71,6 +84,8 @@ class CreateTrainFragment : BaseFragment() {
     private lateinit var viewInputGoal: TextInputLayout
     private lateinit var viewEditGoal: TextInputEditText
     private lateinit var tvSave: TextView
+    private lateinit var tvAddExercises: TextView
+    private lateinit var rvExrcises: RecyclerView
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -83,16 +98,6 @@ class CreateTrainFragment : BaseFragment() {
                 requireNotNull(bundle[KEY_CLIENT_ID])
                 requireNotNull(bundle[KEY_TRAIN_ID])
             }
-        }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        lifecycleScope.launchWhenStarted {
-            viewModel.getClient()
-        }
-        lifecycleScope.launchWhenStarted {
-            viewModel.getExercises()
         }
     }
 
@@ -120,9 +125,12 @@ class CreateTrainFragment : BaseFragment() {
         viewEditTime = view.findViewById(R.id.input_edit_time)
         viewEditTimeEnd = view.findViewById(R.id.input_edit_time_end)
         tvSave = view.findViewById(R.id.tv_save)
+        tvAddExercises = view.findViewById(R.id.tv_add_activity)
+        rvExrcises = view.findViewById(R.id.rv_exercises)
 
         initToolbar()
         observeData()
+        initRecyclerView()
 
         viewEditDate.setOnClickListener { showDatePickerDialog(viewModel.state.value?.date?.day) }
         viewEditTime.setOnClickListener { showTimePickerDialog(PickedTime.START) }
@@ -135,10 +143,23 @@ class CreateTrainFragment : BaseFragment() {
             )
             //navigateBack(requireActivity())
         }
+        tvAddExercises.setOnClickListener {
+            navigate(requireActivity(), R.id.action_navigation_create_session_to_ExerciseFragment)
+        }
     }
 
     private fun observeData() {
+        viewModel.state.observe(viewLifecycleOwner, {
+            renderDateState(it)
+            renderClientState(it)
+            adapter.submitList(it.exercises.map { it.mockExercise })
+        })
+    }
 
+    private fun initRecyclerView() {
+        rvExrcises.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
+        rvExrcises.setHasFixedSize(true)
+        rvExrcises.adapter = adapter
     }
 
     private fun showDatePickerDialog(initialDate: Date? = null) {
@@ -173,32 +194,32 @@ class CreateTrainFragment : BaseFragment() {
         }
     }
 
-    private fun renderDateState(state: CreateTrainViewModel.DateState) {
+    private fun renderDateState(state: CreateTrainViewModel.State) {
         viewEditDate.setText(
-            state.day.toStringFormat(CalendarManager.DAY_MONTH_WEEKDAY),
+            state.date.day.toStringFormat(CalendarManager.DAY_MONTH_WEEKDAY),
             TextView.BufferType.NORMAL
         )
         viewEditTime.setText(
-            state.timeStart.toStringFormat(CalendarManager.HOUR_MiNUTE_FORMAT),
+            state.date.timeStart.toStringFormat(CalendarManager.HOUR_MiNUTE_FORMAT),
             TextView.BufferType.NORMAL
         )
         viewEditTimeEnd.setText(
-            state.timeEnd.toStringFormat(CalendarManager.HOUR_MiNUTE_FORMAT),
+            state.date.timeEnd.toStringFormat(CalendarManager.HOUR_MiNUTE_FORMAT),
             TextView.BufferType.NORMAL
         )
     }
 
-//    private fun renderClientState(state: CreateTrainViewModel.ClientState) {
-//        if (state.name.isNotEmpty()) {
-//            viewEditName.setText(state.name, TextView.BufferType.NORMAL)
-//        }
-//        if (state.description.isNotEmpty()) {
-//            viewEditDescription.setText(state.description, TextView.BufferType.NORMAL)
-//        }
-//        if (state.goal.isNotEmpty()) {
-//            viewEditGoal.setText(state.goal, TextView.BufferType.NORMAL)
-//        }
-//    }
+    private fun renderClientState(state: CreateTrainViewModel.State) {
+        if (state.client.name.isNotEmpty()) {
+            viewEditName.setText(state.client.name, TextView.BufferType.NORMAL)
+        }
+        if (state.client.description.isNotEmpty()) {
+            viewEditDescription.setText(state.client.description, TextView.BufferType.NORMAL)
+        }
+        if (state.client.goal.isNotEmpty()) {
+            viewEditGoal.setText(state.client.goal, TextView.BufferType.NORMAL)
+        }
+    }
 }
 
 enum class PickedTime {

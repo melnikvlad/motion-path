@@ -15,6 +15,7 @@ import com.example.motionpath.ui.create_train.CreateTrainFragment.Companion.KEY_
 import com.example.motionpath.ui.create_train.CreateTrainFragment.Companion.KEY_SCREEN_MODE
 import com.example.motionpath.ui.create_train.CreateTrainFragment.Companion.KEY_TRAIN_END_DATE
 import com.example.motionpath.ui.create_train.CreateTrainFragment.Companion.KEY_TRAIN_ID
+import com.example.motionpath.ui.exercise.ExerciseSelectionRepository
 import com.example.motionpath.util.extension.executeIO
 import com.example.motionpath.util.extension.executeUI
 import com.example.motionpath.util.newTime
@@ -24,14 +25,16 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.*
 import java.util.*
 
 @ExperimentalCoroutinesApi
 class CreateTrainViewModel @AssistedInject constructor(
     private val trainUseCase: TrainUseCase,
     private val clientUseCase: ClientUseCase,
-    @Assisted args: Bundle) : ViewModel() {
+    private val exerciseSelectionRepository: ExerciseSelectionRepository,
+    @Assisted args: Bundle
+) : ViewModel() {
 
     enum class Mode {
         CREATE,
@@ -60,9 +63,21 @@ class CreateTrainViewModel @AssistedInject constructor(
     init {
         getClient()
         getExercises()
+
+        exerciseSelectionRepository.getSelectedExercises()
+            .onEach { mockExercises ->
+                val exercises = mockExercises.map { Exercise(mockExercise = it) }
+                _state.emit(_state.value.copy(exercises = exercises))
+            }
+            .launchIn(viewModelScope)
     }
 
-    fun getClient() {
+    override fun onCleared() {
+        super.onCleared()
+        exerciseSelectionRepository.clear()
+    }
+
+    private fun getClient() {
         viewModelScope.executeIO {
             val client = clientUseCase.getClient(clientId)
             when {
@@ -72,7 +87,7 @@ class CreateTrainViewModel @AssistedInject constructor(
         }
     }
 
-    fun getExercises() {
+    private fun getExercises() {
         if (mode == Mode.EDIT) {
             viewModelScope.executeIO {
                 val exercises = trainUseCase.getExercises(trainId)

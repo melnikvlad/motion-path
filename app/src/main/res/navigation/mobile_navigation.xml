@@ -44,7 +44,11 @@
         android:id="@+id/navigation_create_session"
         android:name="com.example.motionpath.ui.create_train.CreateTrainFragment"
         android:label="@string/title_create_session"
-        tools:layout="@layout/fragment_create_session" />
+        tools:layout="@layout/fragment_create_session" >
+        <action
+            android:id="@+id/action_navigation_create_session_to_ExerciseFragment"
+            app:destination="@id/navigation_select_exercise" />
+    </fragment>
 
     <fragment
         android:id="@+id/searchFragment"
@@ -64,5 +68,10 @@
         android:id="@+id/navigation_profile"
         android:name="com.example.motionpath.ui.profile.ProfileFragment"
         android:label="ProfileFragment" />
+
+    <fragment
+        android:id="@+id/navigation_select_exercise"
+        android:name="com.example.motionpath.ui.exercise.ExerciseFragment"
+        android:label="ExerciseFragment" />
 
 </navigation>

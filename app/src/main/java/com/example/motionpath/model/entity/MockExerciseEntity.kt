@@ -2,7 +2,7 @@ package com.example.motionpath.model.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.motionpath.model.domain.MockExercise
+import com.example.motionpath.model.domain.mock_exercise.MockExercise
 
 @Entity(tableName = "mock_exercises")
 data class MockExerciseEntity(

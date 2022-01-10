@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.appcompat.widget.Toolbar
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -14,6 +16,8 @@ import com.example.motionpath.ui.base.BaseFragment
 import com.example.motionpath.ui.exercise.adapter.ExerciseAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
+import java.lang.StringBuilder
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class ExerciseFragment : BaseFragment() {
@@ -26,7 +30,11 @@ class ExerciseFragment : BaseFragment() {
         )
     }
 
+    @Inject
+    lateinit var exerciseSelectionRepository: ExerciseSelectionRepository
+
     private lateinit var rv: RecyclerView
+    private lateinit var toolbar: Toolbar
 
     private val viewModel: ExerciseViewModel by viewModels()
     private val adapter: ExerciseAdapter by lazy(LazyThreadSafetyMode.NONE) {
@@ -34,6 +42,9 @@ class ExerciseFragment : BaseFragment() {
             requireContext(),
             onItemClick = {
                 viewModel.processEvent(ExerciseEvent.onItemClicked(it))
+            },
+            onItemRemoveClick = {
+                viewModel.processEvent(ExerciseEvent.onItemRemoveClicked(it))
             }
         )
     }
@@ -46,8 +57,10 @@ class ExerciseFragment : BaseFragment() {
         val view = inflater.inflate(R.layout.fragment_exercise, container, false)
 
         rv = view.findViewById(R.id.rv)
+        toolbar = view.findViewById(R.id.view_toolbar)
 
         initRecyclerView()
+        initToolbar()
 
         return view
     }
@@ -63,10 +76,12 @@ class ExerciseFragment : BaseFragment() {
     private fun renderState(state: ExerciseUiState?) {
         state?.let {
             when (it.status) {
-                Status.Data -> {
+                is Status.Data -> {
                     if (it.depth == SelectionDepth.CATEGORY) {
-                        adapter.submitList(it.categories)
+                        hideToolbarBackButton()
+                        adapter.submitList(it.selectedExercises + it.categories)
                     } else {
+                        showToolbarBackButton(it.status.title)
                         adapter.submitList(it.exercise)
                     }
                 }
@@ -83,8 +98,24 @@ class ExerciseFragment : BaseFragment() {
     }
 
     private fun initRecyclerView() {
-        rv.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
+        rv.itemAnimator = null
+        rv.layoutManager = LinearLayoutManager(requireContext())
         rv.setHasFixedSize(true)
         rv.adapter = adapter
+    }
+
+    private fun initToolbar() {
+        hideToolbarBackButton()
+        toolbar.setNavigationOnClickListener { viewModel.processEvent(ExerciseEvent.onBackButtonClicked)}
+    }
+
+    private fun hideToolbarBackButton() {
+        toolbar.title = getString(R.string.title_exercise)
+        toolbar.navigationIcon = null
+    }
+
+    private fun showToolbarBackButton(title: String?) {
+        toolbar.title = title
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back)
     }
 }
