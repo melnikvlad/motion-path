@@ -74,7 +74,7 @@ class ExerciseViewModel @Inject constructor(
             mockExerciseUseCase.getMockExercices(category)
                 .collect { list ->
                     viewState = viewState.copy(
-                        status = if (list.isNullOrEmpty()) Status.Empty else Status.Data(category.name),
+                        status = if (list.isNullOrEmpty()) Status.Empty else Status.Data(category),
                         exercise = list,
                         depth = SelectionDepth.EXERCISE
                     )

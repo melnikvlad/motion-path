@@ -108,7 +108,7 @@ class ExerciseAdapter(
 
         fun bind(item: MockExercise) {
             tvTitle.text =
-                if (item.name != "None") item.name else context.getString(R.string.title_exercise)
+                if (item.name != "None") item.getLocalizedName(context) else context.getString(R.string.title_exercise)
         }
     }
 
@@ -122,7 +122,7 @@ class ExerciseAdapter(
         }
 
         private fun bindName(item: MockExercise) {
-            tvName.text = item.name
+            tvName.text = item.getLocalizedName(context)
         }
     }
 
@@ -136,7 +136,7 @@ class ExerciseAdapter(
         }
 
         private fun bindName(item: MockExercise) {
-            tvName.text = item.name
+            tvName.text = item.getLocalizedName(context)
         }
 
         fun bindSelection(exerciseSelectedCount: Int) {

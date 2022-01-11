@@ -81,7 +81,7 @@ class ExerciseFragment : BaseFragment() {
                         hideToolbarBackButton()
                         adapter.submitList(it.selectedExercises + it.categories)
                     } else {
-                        showToolbarBackButton(it.status.title)
+                        showToolbarBackButton(it.status.category?.getLocalizedName(requireContext()))
                         adapter.submitList(it.exercise)
                     }
                 }

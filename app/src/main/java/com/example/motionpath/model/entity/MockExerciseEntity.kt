@@ -1,5 +1,7 @@
 package com.example.motionpath.model.entity
 
+import android.content.Context
+import android.content.res.Resources
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.example.motionpath.model.domain.mock_exercise.MockExercise

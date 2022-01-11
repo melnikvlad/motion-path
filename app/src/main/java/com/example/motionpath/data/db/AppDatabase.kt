@@ -54,23 +54,23 @@ abstract class AppDatabase : RoomDatabase() {
                 .insert(
                     listOf(
                         // Categories
-                        MockExerciseEntity(id = 1, name = context.getString(R.string.mock_exercise_1)),
-                        MockExerciseEntity(id = 2, name = context.getString(R.string.mock_exercise_2)),
-                        MockExerciseEntity(id = 3, name = context.getString(R.string.mock_exercise_3)),
-                        MockExerciseEntity(id = 4, name = context.getString(R.string.mock_exercise_4)),
-                        MockExerciseEntity(id = 5, name = context.getString(R.string.mock_exercise_5)),
-                        MockExerciseEntity(id = 6, name = context.getString(R.string.mock_exercise_6)),
-                        MockExerciseEntity(id = 7, name = context.getString(R.string.mock_exercise_7)),
-                        MockExerciseEntity(id = 8, name = context.getString(R.string.mock_exercise_8)),
-                        MockExerciseEntity(id = 9, name = context.getString(R.string.mock_exercise_9)),
+                        MockExerciseEntity(id = 1, name = "mock_exercise_1"),
+                        MockExerciseEntity(id = 2, name = "mock_exercise_2"),
+                        MockExerciseEntity(id = 3, name = "mock_exercise_3"),
+                        MockExerciseEntity(id = 4, name = "mock_exercise_4"),
+                        MockExerciseEntity(id = 5, name = "mock_exercise_5"),
+                        MockExerciseEntity(id = 6, name = "mock_exercise_6"),
+                        MockExerciseEntity(id = 7, name = "mock_exercise_7"),
+                        MockExerciseEntity(id = 8, name = "mock_exercise_8"),
+                        MockExerciseEntity(id = 9, name = "mock_exercise_9"),
 
                         // Category exercises
-                        MockExerciseEntity(parentId = 1, name = context.getString(R.string.mock_exercise_1_1)),
-                        MockExerciseEntity(parentId = 1, name = context.getString(R.string.mock_exercise_1_2)),
-                        MockExerciseEntity(parentId = 1, name = context.getString(R.string.mock_exercise_1_3)),
-                        MockExerciseEntity(parentId = 1, name = context.getString(R.string.mock_exercise_1_4)),
-                        MockExerciseEntity(parentId = 1, name = context.getString(R.string.mock_exercise_1_5)),
-                        MockExerciseEntity(parentId = 1, name = context.getString(R.string.mock_exercise_1_6)),
+                        MockExerciseEntity(parentId = 1, name = "mock_exercise_1_1"),
+                        MockExerciseEntity(parentId = 1, name = "mock_exercise_1_2"),
+                        MockExerciseEntity(parentId = 1, name = "mock_exercise_1_3"),
+                        MockExerciseEntity(parentId = 1, name = "mock_exercise_1_4"),
+                        MockExerciseEntity(parentId = 1, name = "mock_exercise_1_5"),
+                        MockExerciseEntity(parentId = 1, name = "mock_exercise_1_6"),
                     )
                 )
         }

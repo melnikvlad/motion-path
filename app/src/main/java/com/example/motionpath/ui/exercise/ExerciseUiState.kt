@@ -14,7 +14,7 @@ data class ExerciseUiState(
 sealed class Status {
     object Loading : Status()
     object Empty: Status()
-    data class Data(val title: String? = null): Status()
+    data class Data(val category: MockExercise? = null): Status()
     data class Error(val error: Throwable): Status()
 }
 
