@@ -14,4 +14,8 @@ class MockExerciseRepositoryImpl(private val mockExerciseDao: MockExerciseDao): 
     override fun get(parentId: Int): Flow<List<MockExerciseEntity>> {
         return mockExerciseDao.get(parentId)
     }
+
+    override fun search(query: String): Flow<List<MockExerciseEntity>> {
+        return mockExerciseDao.search(query)
+    }
 }

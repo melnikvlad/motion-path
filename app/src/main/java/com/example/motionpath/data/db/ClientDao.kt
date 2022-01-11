@@ -22,9 +22,6 @@ interface ClientDao {
     @Query("SELECT * FROM clients WHERE id = :clientId")
     fun getById(clientId: Int): ClientEntity?
 
-    @Query("SELECT * FROM clients WHERE name LIKE '%' || :queryName || '%'")
-    fun getByQuery(queryName: String): Flow<List<ClientEntity>>
-
     @Query("SELECT * FROM clients WHERE category = :category")
     fun getByCategory(category: Int): ClientEntity
 

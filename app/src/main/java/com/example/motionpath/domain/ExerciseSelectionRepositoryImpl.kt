@@ -1,8 +1,10 @@
-package com.example.motionpath.ui.exercise
+package com.example.motionpath.domain
 
 import com.example.motionpath.model.domain.mock_exercise.MockExercise
 import com.example.motionpath.model.domain.mock_exercise.MockExerciseType
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class ExerciseSelectionRepositoryImpl : ExerciseSelectionRepository {
     private val _exercises = MutableStateFlow<List<MockExercise>>(emptyList())
@@ -10,7 +12,11 @@ class ExerciseSelectionRepositoryImpl : ExerciseSelectionRepository {
     private val categorySelectionMap = HashMap<Int, Int>()
     private val selectedExercisesMap = HashMap<Int, Int>()
 
-    override fun addExercise(exercise: MockExercise) {
+    override suspend fun addPreSelectedExercises(exercises: List<MockExercise>) {
+        exercises.forEach { addExercise(it) }
+    }
+
+    override suspend fun addExercise(exercise: MockExercise) {
         _exercises.value = _exercises.value.toMutableList().apply {
             add(exercise.copy(viewType = MockExerciseType.ITEM_SELECTED))
         }
@@ -22,7 +28,7 @@ class ExerciseSelectionRepositoryImpl : ExerciseSelectionRepository {
         }
     }
 
-    override fun removeExercise(exercise: MockExercise) {
+    override suspend fun removeExercise(exercise: MockExercise) {
         val pos = _exercises.value.indexOfFirst { it.id == exercise.id }
         _exercises.value = _exercises.value.toMutableList().apply {
             removeAt(pos)
@@ -38,12 +44,8 @@ class ExerciseSelectionRepositoryImpl : ExerciseSelectionRepository {
 
         exercise.categoryId?.let { categoryId ->
             categorySelectionMap[categoryId] = categorySelectionMap[categoryId]?.let { count ->
-                if (count > 1) {
-                    count - 1
-                }
-                else {
-                    0
-                }
+                if (count > 1) count - 1
+                else 0
             } ?: 0
         }
     }
@@ -62,5 +64,5 @@ class ExerciseSelectionRepositoryImpl : ExerciseSelectionRepository {
         categorySelectionMap.clear()
     }
 
-    override fun getSelectedExercises(): StateFlow<List<MockExercise>> = _exercises
+    override fun getSelectedExercises(): StateFlow<List<MockExercise>> = _exercises.asStateFlow()
 }

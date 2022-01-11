@@ -41,6 +41,10 @@ class ExerciseAdapter(
                 TitleViewHolder(inflater.inflate(R.layout.item_mock_exercise_title, parent, false))
             }
 
+            MockExerciseType.ITEM_MUSCLE_NAME.code -> {
+                ExerciseMuscleViewHolder(inflater.inflate(R.layout.item_mock_exercise_muscle_title, parent, false))
+            }
+
             MockExerciseType.TITLE_CATEGORY.code -> {
                 CategoryTitleViewHolder(
                     inflater.inflate(
@@ -83,6 +87,8 @@ class ExerciseAdapter(
 
                 is CategoryTitleViewHolder -> holder.bind(item)
 
+                is ExerciseMuscleViewHolder -> holder.bind(item)
+
                 is SelectedExerciseViewHolder -> {
                     holder.bind(item)
                     holder.tvClose.setOnClickListener { v -> onItemRemoveClick(item) }
@@ -100,6 +106,16 @@ class ExerciseAdapter(
 
         fun bind() {
             tvTitle.text = "Выбрано" // TODO
+        }
+    }
+
+    inner class ExerciseMuscleViewHolder(v: View) : RecyclerView.ViewHolder(v) {
+        private val tvMuscleName = v.findViewById<TextView>(R.id.tv_muscle_name)
+
+        fun bind(item: MockExercise) {
+            if (item.muscleName != null) {
+                tvMuscleName.text = item.getLocalizedMuscleName(context)
+            }
         }
     }
 

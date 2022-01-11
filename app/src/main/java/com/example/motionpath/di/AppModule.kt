@@ -16,8 +16,9 @@ import com.example.motionpath.domain.usecase.exercise.GetMockExercicesUseCase
 import com.example.motionpath.domain.usecase.exercise.GetMockCategoriesUseCase
 import com.example.motionpath.domain.usecase.exercise.MockExerciseUseCase
 import com.example.motionpath.domain.usecase.train.*
-import com.example.motionpath.ui.exercise.ExerciseSelectionRepository
-import com.example.motionpath.ui.exercise.ExerciseSelectionRepositoryImpl
+import com.example.motionpath.domain.ExerciseSelectionRepository
+import com.example.motionpath.domain.ExerciseSelectionRepositoryImpl
+import com.example.motionpath.domain.usecase.exercise.GetMockExercisesByQueryUseCase
 import com.example.motionpath.util.DATABASE_NAME
 import com.example.motionpath.util.DispatcherProvider
 import dagger.Module
@@ -104,8 +105,10 @@ object AppModule {
     @Provides
     @Singleton
     fun provideMockExerciseUseCase(repository: MockExerciseRepository,
-                                   exerciseSelectionRepository: ExerciseSelectionRepository) = MockExerciseUseCase(
+                                   exerciseSelectionRepository: ExerciseSelectionRepository
+    ) = MockExerciseUseCase(
         GetMockCategoriesUseCase(repository, exerciseSelectionRepository),
-        GetMockExercicesUseCase(repository, exerciseSelectionRepository)
+        GetMockExercicesUseCase(repository, exerciseSelectionRepository),
+        GetMockExercisesByQueryUseCase(repository, exerciseSelectionRepository)
     )
 }

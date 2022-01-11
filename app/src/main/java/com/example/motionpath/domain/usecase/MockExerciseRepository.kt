@@ -7,4 +7,6 @@ interface MockExerciseRepository {
     fun get(): Flow<List<MockExerciseEntity>>
 
     fun get(parentId: Int): Flow<List<MockExerciseEntity>>
+
+    fun search(query: String): Flow<List<MockExerciseEntity>>
 }

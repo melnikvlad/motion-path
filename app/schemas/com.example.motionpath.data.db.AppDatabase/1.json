@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "4513950eee8ee573ca797ad8b38ac696",
+    "identityHash": "ddaab07d6f2c941767314b18e1a85c25",
     "entities": [
       {
         "tableName": "clients",
@@ -158,7 +158,7 @@
       },
       {
         "tableName": "mock_exercises",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `parentId` INTEGER, `name` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `parentId` INTEGER, `exerciseName` TEXT NOT NULL, `muscleName` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -173,10 +173,16 @@
             "notNull": false
           },
           {
-            "fieldPath": "name",
-            "columnName": "name",
+            "fieldPath": "exerciseName",
+            "columnName": "exerciseName",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "muscleName",
+            "columnName": "muscleName",
+            "affinity": "TEXT",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -192,7 +198,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4513950eee8ee573ca797ad8b38ac696')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'ddaab07d6f2c941767314b18e1a85c25')"
     ]
   }
 }

@@ -1,12 +1,10 @@
 package com.example.motionpath.ui.exercise
 
 import androidx.lifecycle.viewModelScope
+import com.example.motionpath.domain.ExerciseSelectionRepository
 import com.example.motionpath.domain.usecase.exercise.MockExerciseUseCase
 import com.example.motionpath.model.domain.mock_exercise.MockExercise
-import com.example.motionpath.model.domain.mock_exercise.MockExerciseItemId
-import com.example.motionpath.model.domain.mock_exercise.MockExerciseType
 import com.example.motionpath.ui.base.BaseViewModel
-import com.example.motionpath.util.extension.executeIO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -28,24 +26,37 @@ class ExerciseViewModel @Inject constructor(
     override fun processEvent(event: ExerciseEvent) {
         when (event) {
             is ExerciseEvent.onItemClicked -> {
-                if (viewState.depth == SelectionDepth.CATEGORY) {
-                    currentCategory = event.item
-                    loadExercises(event.item)
-                } else {
-                    exerciseSelectionRepository.addExercise(event.item)
-                    currentCategory?.let { loadExercises(it) }
+                when(viewState.depth) {
+                    SelectionDepth.CATEGORY -> {
+                        currentCategory = event.item
+                        loadExercises(event.item)
+                    }
+
+                    SelectionDepth.EXERCISE -> {
+                        viewModelScope.launch {
+                            exerciseSelectionRepository.addExercise(event.item)
+                        }
+                        currentCategory?.let { loadExercises(it) }
+                    }
+
+                    SelectionDepth.SEARCH -> {
+                        viewModelScope.launch {
+                            exerciseSelectionRepository.addExercise(event.item)
+                        }
+                        // TODO: load exercises of selected exercise category
+                    }
                 }
             }
 
             is ExerciseEvent.onItemRemoveClicked -> {
-                exerciseSelectionRepository.removeExercise(event.item)
+                viewModelScope.launch {
+                    exerciseSelectionRepository.removeExercise(event.item)
+                }
+
                 when(viewState.depth) {
-                    SelectionDepth.CATEGORY -> {
-                        loadCategories()
-                    }
-                    SelectionDepth.EXERCISE -> {
-                        currentCategory?.let { loadExercises(it) }
-                    }
+                    SelectionDepth.CATEGORY -> loadCategories()
+                    SelectionDepth.EXERCISE -> currentCategory?.let { loadExercises(it) }
+                    SelectionDepth.SEARCH -> Unit
                 }
             }
 
@@ -54,12 +65,16 @@ class ExerciseViewModel @Inject constructor(
                 viewState = viewState.copy(depth = SelectionDepth.CATEGORY)
                 loadCategories()
             }
+
+            ExerciseEvent.onSearchViewClicked -> {
+                viewState = viewState.copy(depth = SelectionDepth.SEARCH)
+            }
         }
     }
 
     private fun loadCategories() {
         viewModelScope.launch {
-            mockExerciseUseCase.getMockCategories()
+            mockExerciseUseCase.getCategories()
                 .collect { list ->
                     viewState = viewState.copy(
                         categories = list,
@@ -71,12 +86,25 @@ class ExerciseViewModel @Inject constructor(
 
     private fun loadExercises(category: MockExercise) {
         viewModelScope.launch {
-            mockExerciseUseCase.getMockExercices(category)
+            mockExerciseUseCase.getExercices(category)
                 .collect { list ->
                     viewState = viewState.copy(
                         status = if (list.isNullOrEmpty()) Status.Empty else Status.Data(category),
                         exercise = list,
                         depth = SelectionDepth.EXERCISE
+                    )
+                }
+        }
+    }
+
+    private fun searchExercises(query: String) {
+        viewModelScope.launch {
+            mockExerciseUseCase.searchExercises(query)
+                .collect { list ->
+                    viewState = viewState.copy(
+                        status = Status.Search,
+                        exercise = list,
+                        depth = SelectionDepth.SEARCH
                     )
                 }
         }

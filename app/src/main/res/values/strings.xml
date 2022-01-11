@@ -43,6 +43,10 @@
     <string name="mock_exercise_8">Голень</string>
     <string name="mock_exercise_9">Шея</string>
 
+    <string name="mock_exercise_muscle_1_1">Мышца 1</string>
+    <string name="mock_exercise_muscle_1_2">Мышца 2</string>
+    <string name="mock_exercise_muscle_1_3">Мышца 3</string>
+
     <string name="mock_exercise_1_1">Становая тяга</string>
     <string name="mock_exercise_1_2">Наклоны со штангой стоя</string>
     <string name="mock_exercise_1_3">Тяга штанги на прямых ногах</string>

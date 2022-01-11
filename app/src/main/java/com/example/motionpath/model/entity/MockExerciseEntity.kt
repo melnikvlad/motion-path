@@ -1,7 +1,5 @@
 package com.example.motionpath.model.entity
 
-import android.content.Context
-import android.content.res.Resources
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.example.motionpath.model.domain.mock_exercise.MockExercise
@@ -11,18 +9,20 @@ data class MockExerciseEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int? = null,
     val parentId: Int? = null,
-    val name: String,
-    //TODO: weight, tries, killos etc.
+    val exerciseName: String,
+    val muscleName: String? = null
 )
 
 fun MockExerciseEntity.toDomain() = MockExercise(
     id = id ?: -1,
     categoryId = parentId,
-    name = name
+    name = exerciseName,
+    muscleName = muscleName
 )
 
 fun MockExercise.toEntity() = MockExerciseEntity(
     id = id,
     parentId = categoryId,
-    name = name
+    exerciseName = name,
+    muscleName = muscleName
 )

@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
@@ -12,11 +11,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.motionpath.R
+import com.example.motionpath.domain.ExerciseSelectionRepository
 import com.example.motionpath.ui.base.BaseFragment
 import com.example.motionpath.ui.exercise.adapter.ExerciseAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
-import java.lang.StringBuilder
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -84,6 +83,10 @@ class ExerciseFragment : BaseFragment() {
                         showToolbarBackButton(it.status.category?.getLocalizedName(requireContext()))
                         adapter.submitList(it.exercise)
                     }
+                }
+
+                Status.Search -> {
+                    adapter.submitList(it.exercise)
                 }
 
                 Status.Empty -> {

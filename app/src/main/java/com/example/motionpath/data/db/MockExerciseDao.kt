@@ -17,4 +17,7 @@ interface MockExerciseDao {
 
     @Query("SELECT * FROM mock_exercises WHERE parentId = :parentId")
     fun get(parentId: Int): Flow<List<MockExerciseEntity>>
+
+    @Query("SELECT * FROM mock_exercises WHERE exerciseName LIKE '%' || :query || '%' OR muscleName LIKE '%' || :query || '%'")
+    fun search(query: String): Flow<List<MockExerciseEntity>>
 }

@@ -5,7 +5,7 @@ import com.example.motionpath.model.domain.mock_exercise.MockExercise
 import com.example.motionpath.model.domain.mock_exercise.MockExerciseItemId
 import com.example.motionpath.model.domain.mock_exercise.MockExerciseType
 import com.example.motionpath.model.entity.toDomain
-import com.example.motionpath.ui.exercise.ExerciseSelectionRepository
+import com.example.motionpath.domain.ExerciseSelectionRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 
@@ -31,26 +31,47 @@ class GetMockExercicesUseCase(
         return selectedExercises.zip(categoryExercises) { selected, current ->
             val result = ArrayList<MockExercise>()
 
+            // Add title for selections
             if (selected.isNotEmpty()) {
                 result.add(
                     0,
                     MockExercise(
-                        id = MockExerciseItemId.TITLE_SELECTED.id,
+                        id = MockExerciseItemId.ID_TITLE_SELECTED.id,
                         viewType = MockExerciseType.TITLE_SELECTED
                     )
                 )
+
+                // Add selected exercises
                 result.addAll(selected)
             }
 
+            // Add current category name
             result.add(
                 MockExercise(
-                    id = MockExerciseItemId.TITLE_CATEGORY.id,
+                    id = MockExerciseItemId.ID_TITLE_CATEGORY.id,
                     name = category.name,
                     viewType = MockExerciseType.TITLE_CATEGORY
                 )
             )
 
-            result.addAll(current)
+            val muscleToExercisesMap = current.groupBy { it.muscleName }
+
+            muscleToExercisesMap.keys.forEach {
+
+                // Add category muscle name
+                result.add(
+                    MockExercise(
+                        id = MockExerciseItemId.ID_TITLE_MUSCLE_NAME.id,
+                        viewType = MockExerciseType.ITEM_MUSCLE_NAME,
+                        muscleName = it
+                    )
+                )
+
+                // Add category exercises grouped by muscles
+                muscleToExercisesMap[it]?.let { muscleExercises ->
+                    result.addAll(muscleExercises)
+                }
+            }
 
             return@zip result
 

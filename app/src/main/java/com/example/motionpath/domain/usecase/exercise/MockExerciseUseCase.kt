@@ -2,6 +2,7 @@ package com.example.motionpath.domain.usecase.exercise
 
 
 data class MockExerciseUseCase(
-    val getMockCategories: GetMockCategoriesUseCase,
-    val getMockExercices: GetMockExercicesUseCase
+    val getCategories: GetMockCategoriesUseCase,
+    val getExercices: GetMockExercicesUseCase,
+    val searchExercises: GetMockExercisesByQueryUseCase
 )

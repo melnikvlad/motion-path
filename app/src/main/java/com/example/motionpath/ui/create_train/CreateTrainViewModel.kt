@@ -15,7 +15,7 @@ import com.example.motionpath.ui.create_train.CreateTrainFragment.Companion.KEY_
 import com.example.motionpath.ui.create_train.CreateTrainFragment.Companion.KEY_SCREEN_MODE
 import com.example.motionpath.ui.create_train.CreateTrainFragment.Companion.KEY_TRAIN_END_DATE
 import com.example.motionpath.ui.create_train.CreateTrainFragment.Companion.KEY_TRAIN_ID
-import com.example.motionpath.ui.exercise.ExerciseSelectionRepository
+import com.example.motionpath.domain.ExerciseSelectionRepository
 import com.example.motionpath.util.extension.executeIO
 import com.example.motionpath.util.extension.executeUI
 import com.example.motionpath.util.newTime
