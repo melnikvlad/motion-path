@@ -6,9 +6,9 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.motionpath.data.db.converters.Converters
+import com.example.motionpath.data.model.entity.*
 import com.example.motionpath.di.annotation.ApplicationScope
-import com.example.motionpath.model.domain.CategoryType
-import com.example.motionpath.model.entity.*
+import com.example.motionpath.model.domain.client_category.CategoryType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -31,13 +31,14 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun categoryDao(): CategoryDao
     abstract fun trainDao(): TrainDao
     abstract fun mockExerciseDao(): MockExerciseDao
+    abstract fun exerciseDao(): ExerciseDao
 
     class Callback @Inject constructor(
         private val databaseProvider: Provider<AppDatabase>,
         @ApplicationScope
-        private val applicationScope: CoroutineScope,
-        private val context: Context
+        private val applicationScope: CoroutineScope
     ): RoomDatabase.Callback() {
+
         override fun onCreate(db: SupportSQLiteDatabase) {
             super.onCreate(db)
             applicationScope.launch(Dispatchers.IO) {

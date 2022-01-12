@@ -1,8 +1,8 @@
 package com.example.motionpath.data.db
 
 import androidx.room.*
-import com.example.motionpath.model.entity.ClientEntity
-import com.example.motionpath.model.entity.relations.ClientWithTrains
+import com.example.motionpath.data.model.entity.ClientEntity
+import com.example.motionpath.data.model.entity.relations.ClientWithTrains
 import kotlinx.coroutines.flow.Flow
 
 @Dao

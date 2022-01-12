@@ -1,4 +1,4 @@
-package com.example.motionpath.model.entity
+package com.example.motionpath.data.model.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

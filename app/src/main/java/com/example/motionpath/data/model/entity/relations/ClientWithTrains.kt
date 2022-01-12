@@ -1,9 +1,9 @@
-package com.example.motionpath.model.entity.relations
+package com.example.motionpath.data.model.entity.relations
 
 import androidx.room.Embedded
 import androidx.room.Relation
-import com.example.motionpath.model.entity.ClientEntity
-import com.example.motionpath.model.entity.TrainEntity
+import com.example.motionpath.data.model.entity.ClientEntity
+import com.example.motionpath.data.model.entity.TrainEntity
 
 data class ClientWithTrains(
     @Embedded val client: ClientEntity,

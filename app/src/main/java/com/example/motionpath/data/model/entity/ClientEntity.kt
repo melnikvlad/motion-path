@@ -1,9 +1,9 @@
-package com.example.motionpath.model.entity
+package com.example.motionpath.data.model.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.motionpath.model.domain.Client
-import com.example.motionpath.model.domain.getCategoryType
+import com.example.motionpath.model.domain.client.Client
+import com.example.motionpath.model.domain.client_category.getCategoryType
 
 @Entity(tableName = "clients")
 data class ClientEntity(

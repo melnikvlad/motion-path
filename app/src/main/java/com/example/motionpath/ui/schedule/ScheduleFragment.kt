@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.motionpath.R
 import com.example.motionpath.model.CalendarDay
-import com.example.motionpath.model.entity.relations.TrainWithClient
+import com.example.motionpath.data.model.entity.relations.TrainWithClient
 import com.example.motionpath.ui.base.BaseFragment
 import com.example.motionpath.ui.create_train.CreateTrainFragment.Companion.createTrainArgs
 import com.example.motionpath.ui.create_train.CreateTrainFragment.Companion.editTrainArgs

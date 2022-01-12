@@ -1,8 +1,7 @@
 package com.example.motionpath.domain.usecase.train
 
 import com.example.motionpath.domain.TrainRepository
-import com.example.motionpath.model.entity.TrainEntity
-import com.example.motionpath.model.entity.relations.TrainWithClient
+import com.example.motionpath.data.model.entity.relations.TrainWithClient
 import kotlinx.coroutines.flow.Flow
 
 class GetTrainsForDateUseCase(private val trainRepository: TrainRepository) {

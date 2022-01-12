@@ -1,6 +1,7 @@
 package com.example.motionpath.model.domain.mock_exercise
 
 import android.content.Context
+import com.example.motionpath.model.domain.Exercise
 import com.example.motionpath.util.IDENTIFIER_STRING
 
 data class MockExercise(
@@ -20,6 +21,10 @@ data class MockExercise(
     fun getLocalizedMuscleName(context: Context): String {
         return context.resources.getString(context.resources.getIdentifier(muscleName, IDENTIFIER_STRING, context.packageName))
     }
+}
+
+fun MockExercise.mapToExercise(index: Int = -1): Exercise {
+    return Exercise(mockExercise = this, index = index + 1)
 }
 
 enum class MockExerciseType(val code: Int) {

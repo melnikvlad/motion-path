@@ -1,6 +1,6 @@
-package com.example.motionpath.domain.usecase
+package com.example.motionpath.domain
 
-import com.example.motionpath.model.entity.MockExerciseEntity
+import com.example.motionpath.data.model.entity.MockExerciseEntity
 import kotlinx.coroutines.flow.Flow
 
 interface MockExerciseRepository {

@@ -2,7 +2,7 @@ package com.example.motionpath.ui.exercise
 
 import androidx.lifecycle.viewModelScope
 import com.example.motionpath.domain.ExerciseSelectionRepository
-import com.example.motionpath.domain.usecase.exercise.MockExerciseUseCase
+import com.example.motionpath.domain.usecase.mock_exercise.MockExerciseUseCase
 import com.example.motionpath.model.domain.mock_exercise.MockExercise
 import com.example.motionpath.ui.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel

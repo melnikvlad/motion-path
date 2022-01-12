@@ -15,7 +15,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.motionpath.R
 import com.example.motionpath.ui.MainActivity
 import com.example.motionpath.ui.base.BaseFragment
-import com.example.motionpath.ui.exercise.adapter.ExerciseAdapter
+import com.example.motionpath.ui.create_train.adapter.ExerciseAdapter
+import com.example.motionpath.ui.exercise.adapter.MockExerciseAdapter
 import com.example.motionpath.util.CalendarManager
 import com.example.motionpath.util.DialogHelpers
 import com.example.motionpath.util.toStringFormat
@@ -62,12 +63,8 @@ class CreateTrainFragment : BaseFragment() {
     private val adapter: ExerciseAdapter by lazy(LazyThreadSafetyMode.NONE) {
         ExerciseAdapter(
             requireContext(),
-            onItemClick = {
-
-            },
-            onItemRemoveClick = {
-
-            }
+            onItemClick = {},
+            onItemRemoveClick = { viewModel.removeExercise(it) }
         )
     }
 
@@ -144,6 +141,7 @@ class CreateTrainFragment : BaseFragment() {
             //navigateBack(requireActivity())
         }
         tvAddExercises.setOnClickListener {
+            viewModel.addExercises()
             navigate(requireActivity(), R.id.action_navigation_create_session_to_ExerciseFragment)
         }
     }
@@ -152,7 +150,7 @@ class CreateTrainFragment : BaseFragment() {
         viewModel.state.observe(viewLifecycleOwner, {
             renderDateState(it)
             renderClientState(it)
-            adapter.submitList(it.exercises.map { it.mockExercise })
+            adapter.submitList(it.exercises)
         })
     }
 

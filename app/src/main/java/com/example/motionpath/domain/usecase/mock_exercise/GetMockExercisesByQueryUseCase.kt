@@ -1,11 +1,11 @@
-package com.example.motionpath.domain.usecase.exercise
+package com.example.motionpath.domain.usecase.mock_exercise
 
+import com.example.motionpath.data.model.entity.toDomain
 import com.example.motionpath.domain.ExerciseSelectionRepository
-import com.example.motionpath.domain.usecase.MockExerciseRepository
+import com.example.motionpath.domain.MockExerciseRepository
 import com.example.motionpath.model.domain.mock_exercise.MockExercise
 import com.example.motionpath.model.domain.mock_exercise.MockExerciseItemId
 import com.example.motionpath.model.domain.mock_exercise.MockExerciseType
-import com.example.motionpath.model.entity.toDomain
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn

@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.motionpath.R
 import com.example.motionpath.domain.ExerciseSelectionRepository
 import com.example.motionpath.ui.base.BaseFragment
-import com.example.motionpath.ui.exercise.adapter.ExerciseAdapter
+import com.example.motionpath.ui.exercise.adapter.MockExerciseAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
@@ -36,8 +36,8 @@ class ExerciseFragment : BaseFragment() {
     private lateinit var toolbar: Toolbar
 
     private val viewModel: ExerciseViewModel by viewModels()
-    private val adapter: ExerciseAdapter by lazy(LazyThreadSafetyMode.NONE) {
-        ExerciseAdapter(
+    private val adapter: MockExerciseAdapter by lazy(LazyThreadSafetyMode.NONE) {
+        MockExerciseAdapter(
             requireContext(),
             onItemClick = {
                 viewModel.processEvent(ExerciseEvent.onItemClicked(it))

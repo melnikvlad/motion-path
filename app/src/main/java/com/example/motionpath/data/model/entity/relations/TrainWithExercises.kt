@@ -1,9 +1,9 @@
-package com.example.motionpath.model.entity.relations
+package com.example.motionpath.data.model.entity.relations
 
 import androidx.room.Embedded
 import androidx.room.Relation
-import com.example.motionpath.model.entity.ExerciseEntity
-import com.example.motionpath.model.entity.TrainEntity
+import com.example.motionpath.data.model.entity.ExerciseEntity
+import com.example.motionpath.data.model.entity.TrainEntity
 
 data class TrainWithExercises(
     @Embedded

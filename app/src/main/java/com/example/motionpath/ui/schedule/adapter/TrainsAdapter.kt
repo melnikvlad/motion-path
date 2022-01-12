@@ -1,25 +1,18 @@
 package com.example.motionpath.ui.schedule.adapter
 
 import android.content.Context
-import android.graphics.BlendMode
-import android.graphics.BlendModeColorFilter
-import android.graphics.Color
-import android.graphics.PorterDuff
-import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.motionpath.R
-import com.example.motionpath.model.domain.getCategoryType
-import com.example.motionpath.model.entity.TrainEntity
-import com.example.motionpath.model.entity.relations.TrainWithClient
+import com.example.motionpath.data.model.entity.relations.TrainWithClient
+import com.example.motionpath.model.domain.client_category.getCategoryType
 import com.example.motionpath.util.CalendarManager
 import com.example.motionpath.util.extension.setVisible
 import com.example.motionpath.util.getDifference

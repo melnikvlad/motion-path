@@ -7,16 +7,14 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.example.motionpath.data.calendar.CalendarPagingSource
 import com.example.motionpath.data.calendar.CalendarRepository.Companion.PAGE_SIZE
-import com.example.motionpath.domain.usecase.client.ClientUseCase
 import com.example.motionpath.domain.usecase.train.*
 import com.example.motionpath.model.CalendarDay
-import com.example.motionpath.model.entity.TrainEntity
+import com.example.motionpath.data.model.entity.TrainEntity
 import com.example.motionpath.util.Logger
 import com.example.motionpath.util.extension.executeIO
 import com.example.motionpath.util.getEndOfDay
 import com.example.motionpath.util.getStartOfDay
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch

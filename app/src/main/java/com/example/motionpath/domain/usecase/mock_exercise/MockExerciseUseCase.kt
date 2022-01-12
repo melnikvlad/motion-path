@@ -1,4 +1,4 @@
-package com.example.motionpath.domain.usecase.exercise
+package com.example.motionpath.domain.usecase.mock_exercise
 
 
 data class MockExerciseUseCase(

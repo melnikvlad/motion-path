@@ -1,9 +1,9 @@
 package com.example.motionpath.data.client
 
 import com.example.motionpath.data.db.ClientDao
+import com.example.motionpath.data.model.entity.ClientEntity
 import com.example.motionpath.domain.ClientRepository
-import com.example.motionpath.model.entity.ClientEntity
-import com.example.motionpath.model.entity.relations.ClientWithTrains
+import com.example.motionpath.data.model.entity.relations.ClientWithTrains
 import kotlinx.coroutines.flow.Flow
 
 class ClientRepositoryImpl(private val clientDao: ClientDao): ClientRepository {

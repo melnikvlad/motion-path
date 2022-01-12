@@ -5,9 +5,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.motionpath.data.model.entity.TrainEntity
+import com.example.motionpath.data.model.entity.toEntity
 import com.example.motionpath.domain.usecase.client.ClientUseCase
 import com.example.motionpath.domain.usecase.train.TrainUseCase
-import com.example.motionpath.model.domain.Client
+import com.example.motionpath.model.domain.client.Client
 import com.example.motionpath.model.domain.Exercise
 import com.example.motionpath.ui.create_train.CreateTrainFragment.Companion.DEFAULT_ID
 import com.example.motionpath.ui.create_train.CreateTrainFragment.Companion.KEY_CLIENT_ID
@@ -16,6 +18,8 @@ import com.example.motionpath.ui.create_train.CreateTrainFragment.Companion.KEY_
 import com.example.motionpath.ui.create_train.CreateTrainFragment.Companion.KEY_TRAIN_END_DATE
 import com.example.motionpath.ui.create_train.CreateTrainFragment.Companion.KEY_TRAIN_ID
 import com.example.motionpath.domain.ExerciseSelectionRepository
+import com.example.motionpath.domain.usecase.exercise.ExerciseUseCase
+import com.example.motionpath.model.domain.mock_exercise.mapToExercise
 import com.example.motionpath.util.extension.executeIO
 import com.example.motionpath.util.extension.executeUI
 import com.example.motionpath.util.newTime
@@ -26,12 +30,14 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import java.util.*
 
 @ExperimentalCoroutinesApi
 class CreateTrainViewModel @AssistedInject constructor(
     private val trainUseCase: TrainUseCase,
     private val clientUseCase: ClientUseCase,
+    private val exerciseUseCase: ExerciseUseCase,
     private val exerciseSelectionRepository: ExerciseSelectionRepository,
     @Assisted args: Bundle
 ) : ViewModel() {
@@ -65,8 +71,10 @@ class CreateTrainViewModel @AssistedInject constructor(
         getExercises()
 
         exerciseSelectionRepository.getSelectedExercises()
-            .onEach { mockExercises ->
-                val exercises = mockExercises.map { Exercise(mockExercise = it) }
+            .onEach { selectedExercises ->
+                val exercises = selectedExercises.mapIndexed { index, mockExercise ->
+                    mockExercise.mapToExercise(index)
+                }
                 _state.emit(_state.value.copy(exercises = exercises))
             }
             .launchIn(viewModelScope)
@@ -96,6 +104,12 @@ class CreateTrainViewModel @AssistedInject constructor(
         }
     }
 
+    fun removeExercise(exercise: Exercise) {
+        viewModelScope.launch {
+            exerciseSelectionRepository.removeExercise(exercise = exercise.mockExercise)
+        }
+    }
+
     fun applyTrainChanges(name: String, description: String, goal: String) {
         if (validator.isValid()) {
             viewModelScope.executeIO {
@@ -103,13 +117,20 @@ class CreateTrainViewModel @AssistedInject constructor(
                 // otherwise create new client
                 val clientId = async { clientUseCase.createClient(name, description, goal) }
                 //TODO: if trainId != null then update with new time
-//                val train = TrainEntity(
-//                    clientId = clientId.await().toInt(),
-//                    timeStart = _dateState.value.timeStart,
-//                    timeEnd = _dateState.value.timeEnd
-//                )
-//                trainUseCase.createTrain(train)
-                //TODO: insert exercises for train
+                val train = TrainEntity(
+                    clientId = clientId.await().toInt(),
+                    timeStart = _state.value.date.timeStart,
+                    timeEnd = _state.value.date.timeStart
+                )
+                val trainId = async { trainUseCase.createTrain(train) }
+
+                with(trainId.await()) {
+                    val exercises = _state.value.exercises.map {
+                        it.copy(trainId = this.toInt()).toEntity()
+                    }
+
+                    exerciseUseCase.insertExercises(exercises)
+                }
             }
         }
     }
@@ -149,6 +170,15 @@ class CreateTrainViewModel @AssistedInject constructor(
                         )
                     )
                 }
+            }
+        }
+    }
+
+    fun addExercises() {
+        viewModelScope.launch {
+            val exercises = _state.value.exercises.map { it.mockExercise }
+            if (exercises.isNotEmpty()) {
+                exerciseSelectionRepository.addPreSelectedExercises(exercises = exercises)
             }
         }
     }

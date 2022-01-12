@@ -1,4 +1,4 @@
-package com.example.motionpath.model.domain
+package com.example.motionpath.model.domain.client_category
 
 import androidx.annotation.ColorRes
 import androidx.annotation.StringRes

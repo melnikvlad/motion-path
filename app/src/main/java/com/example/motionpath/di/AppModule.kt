@@ -5,20 +5,24 @@ import android.content.Context
 import androidx.room.Room
 import com.example.motionpath.data.client.ClientRepositoryImpl
 import com.example.motionpath.data.db.*
+import com.example.motionpath.data.exercise.ExerciseRepositoryImpl
 import com.example.motionpath.data.mock_exercise.MockExerciseRepositoryImpl
 import com.example.motionpath.data.train.TrainRepositoryImpl
 import com.example.motionpath.di.annotation.ApplicationScope
 import com.example.motionpath.domain.ClientRepository
 import com.example.motionpath.domain.TrainRepository
-import com.example.motionpath.domain.usecase.MockExerciseRepository
+import com.example.motionpath.domain.MockExerciseRepository
 import com.example.motionpath.domain.usecase.client.*
-import com.example.motionpath.domain.usecase.exercise.GetMockExercicesUseCase
-import com.example.motionpath.domain.usecase.exercise.GetMockCategoriesUseCase
-import com.example.motionpath.domain.usecase.exercise.MockExerciseUseCase
+import com.example.motionpath.domain.usecase.mock_exercise.GetMockExercicesUseCase
+import com.example.motionpath.domain.usecase.mock_exercise.GetMockCategoriesUseCase
+import com.example.motionpath.domain.usecase.mock_exercise.MockExerciseUseCase
 import com.example.motionpath.domain.usecase.train.*
 import com.example.motionpath.domain.ExerciseSelectionRepository
 import com.example.motionpath.domain.ExerciseSelectionRepositoryImpl
-import com.example.motionpath.domain.usecase.exercise.GetMockExercisesByQueryUseCase
+import com.example.motionpath.domain.usecase.ExerciseRepository
+import com.example.motionpath.domain.usecase.exercise.ExerciseUseCase
+import com.example.motionpath.domain.usecase.exercise.InsertExercisesUseCase
+import com.example.motionpath.domain.usecase.mock_exercise.GetMockExercisesByQueryUseCase
 import com.example.motionpath.util.DATABASE_NAME
 import com.example.motionpath.util.DispatcherProvider
 import dagger.Module
@@ -65,6 +69,9 @@ object AppModule {
     fun provideCategoryDao(db: AppDatabase): CategoryDao = db.categoryDao()
 
     @Provides
+    fun provideExerciseDao(db: AppDatabase): ExerciseDao = db.exerciseDao()
+
+    @Provides
     fun provideMockExerciseDao(db: AppDatabase): MockExerciseDao = db.mockExerciseDao()
 
     @Provides
@@ -78,6 +85,10 @@ object AppModule {
     @Provides
     @Singleton
     fun provideMockExerciseRepository(dao: MockExerciseDao): MockExerciseRepository = MockExerciseRepositoryImpl(dao)
+
+    @Provides
+    @Singleton
+    fun provideExerciseRepository(dao: ExerciseDao): ExerciseRepository = ExerciseRepositoryImpl(dao)
 
     @Provides
     @Singleton
@@ -110,5 +121,11 @@ object AppModule {
         GetMockCategoriesUseCase(repository, exerciseSelectionRepository),
         GetMockExercicesUseCase(repository, exerciseSelectionRepository),
         GetMockExercisesByQueryUseCase(repository, exerciseSelectionRepository)
+    )
+
+    @Provides
+    @Singleton
+    fun provideExerciseUseCase(repository: ExerciseRepository) = ExerciseUseCase(
+        InsertExercisesUseCase(repository)
     )
 }

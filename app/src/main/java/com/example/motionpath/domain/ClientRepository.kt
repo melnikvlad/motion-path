@@ -1,7 +1,7 @@
 package com.example.motionpath.domain
 
-import com.example.motionpath.model.entity.ClientEntity
-import com.example.motionpath.model.entity.relations.ClientWithTrains
+import com.example.motionpath.data.model.entity.ClientEntity
+import com.example.motionpath.data.model.entity.relations.ClientWithTrains
 import kotlinx.coroutines.flow.Flow
 
 interface ClientRepository {

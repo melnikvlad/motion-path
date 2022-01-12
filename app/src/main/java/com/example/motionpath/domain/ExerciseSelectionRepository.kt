@@ -1,7 +1,6 @@
 package com.example.motionpath.domain
 
 import com.example.motionpath.model.domain.mock_exercise.MockExercise
-import com.example.motionpath.model.domain.mock_exercise.MockExerciseListItem
 import kotlinx.coroutines.flow.StateFlow
 
 interface ExerciseSelectionRepository {

@@ -14,7 +14,7 @@ import com.example.motionpath.model.domain.mock_exercise.MockExercise
 import com.example.motionpath.model.domain.mock_exercise.MockExerciseType
 import com.example.motionpath.ui.exercise.adapter.ExerciseDiffCallback.Companion.PAYLOAD_COUNT
 
-class ExerciseAdapter(
+class MockExerciseAdapter(
     private val context: Context,
     private val onItemClick: (item: MockExercise) -> Unit,
     private val onItemRemoveClick: (item: MockExercise) -> Unit,
