@@ -17,5 +17,7 @@ interface ExerciseSelectionRepository {
 
     fun getCategoryExerciseCount(category: MockExercise): Int
 
+    fun isEmpty(): Boolean
+
     fun clear()
 }

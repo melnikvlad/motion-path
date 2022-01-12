@@ -6,6 +6,9 @@ import com.example.motionpath.model.domain.Exercise
 
 class GetTrainExercisesUseCase(private val trainRepository: TrainRepository) {
     suspend operator fun invoke(trainId: Int): List<Exercise> {
-        return trainRepository.getTrainWithExercises(trainId).exercises.map { it.toDomain() }
+        return trainRepository.getTrainWithExercises(trainId).exercises
+            .mapIndexed { index, entity ->
+                entity.toDomain(index)
+        }
     }
 }

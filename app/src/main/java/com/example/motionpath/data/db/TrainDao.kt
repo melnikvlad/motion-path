@@ -11,6 +11,7 @@ interface TrainDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun createTrain(train: TrainEntity): Long
 
+    @Transaction
     @Query("SELECT * FROM trains WHERE timeStart BETWEEN :dateStart AND :dateEnd")
     fun getTrainsForDate(dateStart: Long, dateEnd: Long): Flow<List<TrainWithClient>>
 

@@ -96,6 +96,7 @@ class ScheduleFragment : BaseFragment() {
                 trainWithClient.client.id,
                 trainWithClient.train.id,
                 currentDate,
+                trainWithClient.train.timeStart,
                 trainWithClient.train.timeEnd
             )
         )

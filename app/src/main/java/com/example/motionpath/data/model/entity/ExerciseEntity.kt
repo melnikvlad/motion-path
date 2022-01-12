@@ -10,17 +10,26 @@ data class ExerciseEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int? = null,
     val trainId: Int,
+    val mockExerciseCategoryId: Int?,
     val mockExerciseId: Int,
     val mockExerciseName: String,
 )
 
-fun ExerciseEntity.toDomain(): Exercise =
-    Exercise(mockExercise = MockExercise(id = mockExerciseId, name = mockExerciseName))
+fun ExerciseEntity.toDomain(index: Int): Exercise =
+    Exercise(
+        index = index + 1,
+        mockExercise = MockExercise(
+            id = mockExerciseId,
+            categoryId = mockExerciseCategoryId,
+            name = mockExerciseName
+        )
+    )
 
 fun Exercise.toEntity(): ExerciseEntity =
     trainId?.let {
         ExerciseEntity(
             trainId = it,
+            mockExerciseCategoryId = mockExercise.categoryId,
             mockExerciseId = mockExercise.id,
             mockExerciseName = mockExercise.name
         )

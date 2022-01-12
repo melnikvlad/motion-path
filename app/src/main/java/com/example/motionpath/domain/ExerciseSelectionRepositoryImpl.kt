@@ -58,11 +58,15 @@ class ExerciseSelectionRepositoryImpl : ExerciseSelectionRepository {
         return categorySelectionMap[category.id] ?: 0
     }
 
+    override fun isEmpty(): Boolean {
+        return selectedExercisesMap.isEmpty()
+    }
+
     override fun clear() {
         _exercises.value = emptyList()
         selectedExercisesMap.clear()
         categorySelectionMap.clear()
     }
 
-    override fun getSelectedExercises(): StateFlow<List<MockExercise>> = _exercises.asStateFlow()
+    override fun getSelectedExercises(): StateFlow<List<MockExercise>> = _exercises
 }

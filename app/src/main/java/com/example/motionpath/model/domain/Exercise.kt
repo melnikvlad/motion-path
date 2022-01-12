@@ -5,7 +5,7 @@ import com.example.motionpath.model.domain.mock_exercise.MockExercise
 data class Exercise(
     val mockExercise: MockExercise,
     val units: List<ExerciseUnit> = ExerciseUnit.values().toList(),
-    val index: Int = -1,
+    val index: Int,
     val trainId: Int? = null
 )
 
