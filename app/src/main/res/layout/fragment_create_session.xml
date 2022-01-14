@@ -16,146 +16,6 @@
         tools:title="@string/title_create_session" />
 
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/input_name"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar_create_session">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/input_edit_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/create_session_edittext_hint_name"
-            android:inputType="textPersonName" />
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/input_date"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/input_name">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/input_edit_date"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/create_session_edittext_hint_date"
-            android:inputType="text"
-            android:cursorVisible="false"
-            android:textIsSelectable="false" />
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/input_time"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/input_time_end"
-        app:layout_constraintTop_toBottomOf="@id/input_date">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/input_edit_time"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:cursorVisible="false"
-            android:textIsSelectable="false"
-            android:hint="@string/create_session_edittext_hint_time"
-            android:inputType="text" />
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/input_time_end"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/input_time"
-        app:layout_constraintTop_toBottomOf="@id/input_date">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/input_edit_time_end"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:cursorVisible="false"
-            android:textIsSelectable="false"
-            android:hint="@string/create_session_edittext_hint_time_end"
-            android:inputType="text" />
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/input_description"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/input_time">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/input_edit_description"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/create_session_edittext_hint_description"
-            android:inputType="textAutoComplete|textAutoCorrect" />
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/input_goal"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/input_description">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/input_edit_goal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/create_session_edittext_hint_goal"
-            android:inputType="textAutoComplete|textAutoCorrect" />
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <TextView
-        android:id="@+id/tv_add_activity"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="@dimen/big_vertical_margin"
-        android:drawablePadding="@dimen/text_and_icon_padding"
-        android:text="@string/create_session_exercise"
-        android:textColor="@color/black"
-        android:textSize="@dimen/main_header_add_session"
-        app:drawableStartCompat="@drawable/ic_add"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/input_goal" />
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_exercises"
         android:layout_width="match_parent"
@@ -164,7 +24,7 @@
         app:layout_constraintBottom_toTopOf="@id/tv_save"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_add_activity" />
+        app:layout_constraintTop_toBottomOf="@id/toolbar_create_session" />
 
     <TextView
         android:id="@+id/tv_save"
@@ -172,7 +32,7 @@
         android:layout_height="@dimen/black_button_height"
         android:layout_marginStart="@dimen/session_recycler_horizontal_margin"
         android:layout_marginEnd="@dimen/session_recycler_horizontal_margin"
-        android:layout_marginBottom="@dimen/big_vertical_margin"
+        android:layout_marginBottom="8dp"
         android:background="@drawable/black_resctangle_with_rounded_corners"
         android:gravity="center"
         android:text="@string/action_save"

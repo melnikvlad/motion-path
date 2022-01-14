@@ -8,10 +8,12 @@ import com.example.motionpath.data.model.entity.TrainEntity
 import com.example.motionpath.data.model.entity.toEntity
 import com.example.motionpath.domain.ExerciseSelectionRepository
 import com.example.motionpath.domain.usecase.client.ClientUseCase
+import com.example.motionpath.domain.usecase.common.GetTrainInfoUseCase
 import com.example.motionpath.domain.usecase.exercise.ExerciseUseCase
 import com.example.motionpath.domain.usecase.train.TrainUseCase
 import com.example.motionpath.model.domain.Exercise
 import com.example.motionpath.model.domain.mock_exercise.mapToExercise
+import com.example.motionpath.model.domain.train.TrainDateInfoItem
 import com.example.motionpath.ui.base.BaseViewModel
 import com.example.motionpath.ui.create_train.CreateTrainFragment.Companion.DEFAULT_ID
 import com.example.motionpath.ui.create_train.CreateTrainFragment.Companion.KEY_CLIENT_ID
@@ -38,6 +40,7 @@ import java.util.*
 class CreateTrainViewModel @AssistedInject constructor(
     private val trainUseCase: TrainUseCase,
     private val clientUseCase: ClientUseCase,
+    private val trainInfoUseCase: GetTrainInfoUseCase,
     private val exerciseUseCase: ExerciseUseCase,
     private val exerciseSelectionRepository: ExerciseSelectionRepository,
     @Assisted args: Bundle
@@ -53,7 +56,11 @@ class CreateTrainViewModel @AssistedInject constructor(
     private var timeEnd = args.getSerializable(KEY_TRAIN_END_DATE) as? Date ?: timeStart.plusHour(1)
 
     init {
-        viewState = CreateTrainUiState(mode = mode, trainDate = TrainDate(date, timeStart, timeEnd))
+        viewState = CreateTrainUiState(
+            mode = mode,
+            trainDate = TrainDate(date, timeStart, timeEnd),
+            isCollapsed = mode == Mode.EDIT
+        )
 
         loadTrainInfo()
 
@@ -76,8 +83,23 @@ class CreateTrainViewModel @AssistedInject constructor(
         when (event) {
             CreateTrainEvent.onAddExerciseClicked -> addExercises()
 
+            is CreateTrainEvent.onRemoveExerciseClicked -> removeExercise(event.exercise)
+
             CreateTrainEvent.onEditDateClicked -> {
                 viewAction = CreateTrainAction.OpenDatePickerAction(viewState.trainDate.day)
+            }
+
+            is CreateTrainEvent.onDateChanged -> TODO()
+
+            is CreateTrainEvent.onDescriptionChanged -> TODO()
+            is CreateTrainEvent.onGoalChanged -> TODO()
+            is CreateTrainEvent.onNameChanged -> TODO()
+            is CreateTrainEvent.onTimeChanged -> {
+
+            }
+
+            CreateTrainEvent.onCollapseOrExpandClicked -> {
+                viewState = viewState.copy(isCollapsed = !viewState.isCollapsed)
             }
 
             is CreateTrainEvent.onSaveClicked -> {
@@ -89,48 +111,33 @@ class CreateTrainViewModel @AssistedInject constructor(
     private fun loadTrainInfo() {
         viewModelScope.executeIO {
 
-            val client = async { clientUseCase.getClient(clientId) ?: viewState.client }
+            val (client, exercises) = trainInfoUseCase(this, mode, clientId, trainId)
 
-            val exercises = async {
-                if (viewState.mode == Mode.EDIT) {
-                    trainUseCase.getExercises(trainId)
-                } else {
-                    emptyList()
-                }
-            }
+            preSelectExercises(exercises)
 
             switchUI {
-                viewState = viewState.copy(client = client.await(), exercises = exercises.await())
+                viewState = viewState.copy(client = client, exercises = exercises)
             }
         }
     }
 
-    fun removeExercise(exercise: Exercise) {
+    private fun removeExercise(exercise: Exercise) {
         viewModelScope.launch {
-            preSelectExercises()
             exerciseSelectionRepository.removeExercise(exercise = exercise.mockExercise)
         }
     }
 
     private fun addExercises() {
-        viewModelScope.launch {
-            preSelectExercises()
-
-            switchUI {
-                viewAction = CreateTrainAction.NavigateToSelectExerciseAction
-            }
-        }
-
+        viewAction = CreateTrainAction.NavigateToSelectExerciseAction
     }
 
-    private fun preSelectExercises() {
+    private fun preSelectExercises(exercises: List<Exercise>) {
         viewModelScope.launch {
-            val exercises = viewState.exercises.map { it.mockExercise }
-            if (exercises.isNotEmpty() && exerciseSelectionRepository.isEmpty()) {
-                exerciseSelectionRepository.addPreSelectedExercises(exercises = exercises)
+            val mockExercises = exercises.map { it.mockExercise }
+            if (exerciseSelectionRepository.isEmpty()) {
+                exerciseSelectionRepository.addPreSelectedExercises(exercises = mockExercises)
             }
         }
-
     }
 
     fun applyTrainChanges(name: String, description: String, goal: String) {
@@ -165,9 +172,7 @@ class CreateTrainViewModel @AssistedInject constructor(
     fun updateDay(day: Date) {
         viewModelScope.executeUI {
             viewState = viewState.copy(
-                trainDate = viewState.trainDate.copy(
-                    day = day
-                )
+                trainDate = viewState.trainDate.copy(day = day)
             )
         }
     }

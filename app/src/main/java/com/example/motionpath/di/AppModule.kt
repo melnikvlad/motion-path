@@ -20,6 +20,7 @@ import com.example.motionpath.domain.usecase.train.*
 import com.example.motionpath.domain.ExerciseSelectionRepository
 import com.example.motionpath.domain.ExerciseSelectionRepositoryImpl
 import com.example.motionpath.domain.usecase.ExerciseRepository
+import com.example.motionpath.domain.usecase.common.GetTrainInfoUseCase
 import com.example.motionpath.domain.usecase.exercise.ExerciseUseCase
 import com.example.motionpath.domain.usecase.exercise.InsertExercisesUseCase
 import com.example.motionpath.domain.usecase.mock_exercise.GetMockExercisesByQueryUseCase
@@ -128,4 +129,11 @@ object AppModule {
     fun provideExerciseUseCase(repository: ExerciseRepository) = ExerciseUseCase(
         InsertExercisesUseCase(repository)
     )
+
+    @Provides
+    @Singleton
+    fun provideGetTrainInfoUseCase(
+        getTrainExercisesUseCase: GetTrainExercisesUseCase,
+        getClientUseCase: GetClientUseCase
+    ) = GetTrainInfoUseCase(getTrainExercisesUseCase, getClientUseCase)
 }

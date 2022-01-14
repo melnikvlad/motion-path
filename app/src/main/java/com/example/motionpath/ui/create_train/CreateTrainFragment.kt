@@ -16,10 +16,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.motionpath.R
 import com.example.motionpath.ui.MainActivity
 import com.example.motionpath.ui.base.BaseFragment
-import com.example.motionpath.ui.create_train.adapter.ExerciseAdapter
-import com.example.motionpath.util.CalendarManager
+import com.example.motionpath.ui.create_train.adapter.TrainInfoAdapter
 import com.example.motionpath.util.DialogHelpers
-import com.example.motionpath.util.toStringFormat
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.AndroidEntryPoint
@@ -49,7 +47,13 @@ class CreateTrainFragment : BaseFragment() {
             KEY_CLIENT_ID to DEFAULT_ID,
         )
 
-        fun editTrainArgs(clientId: Int?, trainId: Int?, date: Date?, timeStart: Date?, timeEnd: Date?) = bundleOf(
+        fun editTrainArgs(
+            clientId: Int?,
+            trainId: Int?,
+            date: Date?,
+            timeStart: Date?,
+            timeEnd: Date?
+        ) = bundleOf(
             KEY_SCREEN_MODE to Mode.EDIT,
             KEY_CURRENT_DATE to date,
             KEY_CLIENT_ID to clientId,
@@ -68,11 +72,12 @@ class CreateTrainFragment : BaseFragment() {
             requireArguments()
         )
     }
-    private val adapter: ExerciseAdapter by lazy(LazyThreadSafetyMode.NONE) {
-        ExerciseAdapter(
+    private val adapter: TrainInfoAdapter by lazy(LazyThreadSafetyMode.NONE) {
+        TrainInfoAdapter(
             requireContext(),
-            onItemClick = {},
-            onItemRemoveClick = { viewModel.removeExercise(it) }
+            onSelectExerciseClick = { viewModel.processEvent(CreateTrainEvent.onAddExerciseClicked) },
+            onItemRemoveClick = { viewModel.processEvent(CreateTrainEvent.onRemoveExerciseClicked(it)) },
+            onCollapseOrExpandClick = { viewModel.processEvent(CreateTrainEvent.onCollapseOrExpandClicked) }
         )
     }
 
@@ -123,27 +128,15 @@ class CreateTrainFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         viewToolbar = view.findViewById(R.id.toolbar_create_session)
-        viewInputName = view.findViewById(R.id.input_name)
-        viewEditName = view.findViewById(R.id.input_edit_name)
-        viewInputDescription = view.findViewById(R.id.input_description)
-        viewEditDescription = view.findViewById(R.id.input_edit_description)
-        viewInputGoal = view.findViewById(R.id.input_goal)
-        viewEditGoal = view.findViewById(R.id.input_edit_goal)
-        viewInputDate = view.findViewById(R.id.input_date)
-        viewEditDate = view.findViewById(R.id.input_edit_date)
-        viewInputTime = view.findViewById(R.id.input_time)
-        viewEditTime = view.findViewById(R.id.input_edit_time)
-        viewEditTimeEnd = view.findViewById(R.id.input_edit_time_end)
+
         tvSave = view.findViewById(R.id.tv_save)
-        tvAddExercises = view.findViewById(R.id.tv_add_activity)
         rvExrcises = view.findViewById(R.id.rv_exercises)
 
         initToolbar()
         initRecyclerView()
 
-        viewEditDate.setOnClickListener { viewModel.processEvent(CreateTrainEvent.onEditDateClicked) }
-        viewEditTime.setOnClickListener { showTimePickerDialog(PickedTime.START) }
-        viewEditTimeEnd.setOnClickListener { showTimePickerDialog(PickedTime.END) }
+//        viewEditTime.setOnClickListener { showTimePickerDialog(PickedTime.START) }
+//        viewEditTimeEnd.setOnClickListener { showTimePickerDialog(PickedTime.END) }
 
         tvSave.setOnClickListener {
             viewModel.processEvent(
@@ -154,27 +147,27 @@ class CreateTrainFragment : BaseFragment() {
                 )
             )
         }
-        tvAddExercises.setOnClickListener {
-            viewModel.processEvent(CreateTrainEvent.onAddExerciseClicked)
-        }
     }
 
     private fun observeData() {
         lifecycleScope.launchWhenStarted {
-            viewModel.viewStates().collect { state ->
-                state?.let {
-                    renderDateState(it)
-                    renderClientState(it)
-                    adapter.submitList(it.exercises)
+            viewModel.viewStates()
+                .collect { state ->
+                    state?.let {
+                        adapter.submitList(it.items())
+                    }
                 }
-            }
         }
+
         lifecycleScope.launchWhenStarted {
             viewModel.viewActions().collect { action ->
                 action?.let {
-                    when(it) {
+                    when (it) {
                         CreateTrainAction.NavigateToSelectExerciseAction -> {
-                            navigate(requireActivity(), R.id.action_navigation_create_session_to_ExerciseFragment)
+                            navigate(
+                                requireActivity(),
+                                R.id.action_navigation_create_session_to_ExerciseFragment
+                            )
                         }
 
                         CreateTrainAction.NavigateToTrainsAction -> {
@@ -191,6 +184,7 @@ class CreateTrainFragment : BaseFragment() {
     }
 
     private fun initRecyclerView() {
+        rvExrcises.itemAnimator = null
         rvExrcises.layoutManager = LinearLayoutManager(requireContext())
         rvExrcises.setHasFixedSize(true)
         rvExrcises.adapter = adapter
@@ -225,33 +219,6 @@ class CreateTrainFragment : BaseFragment() {
             navigationIcon =
                 ContextCompat.getDrawable(requireContext(), R.drawable.abc_ic_ab_back_material)
             setOnClickListener { navigateBack(requireActivity()) }
-        }
-    }
-
-    private fun renderDateState(state: CreateTrainUiState) {
-        viewEditDate.setText(
-            state.trainDate.day.toStringFormat(CalendarManager.DAY_MONTH_WEEKDAY),
-            TextView.BufferType.NORMAL
-        )
-        viewEditTime.setText(
-            state.trainDate.timeStart.toStringFormat(CalendarManager.HOUR_MiNUTE_FORMAT),
-            TextView.BufferType.NORMAL
-        )
-        viewEditTimeEnd.setText(
-            state.trainDate.timeEnd.toStringFormat(CalendarManager.HOUR_MiNUTE_FORMAT),
-            TextView.BufferType.NORMAL
-        )
-    }
-
-    private fun renderClientState(state: CreateTrainUiState) {
-        if (state.client.name.isNotEmpty()) {
-            viewEditName.setText(state.client.name, TextView.BufferType.NORMAL)
-        }
-        if (state.client.description.isNotEmpty()) {
-            viewEditDescription.setText(state.client.description, TextView.BufferType.NORMAL)
-        }
-        if (state.client.goal.isNotEmpty()) {
-            viewEditGoal.setText(state.client.goal, TextView.BufferType.NORMAL)
         }
     }
 }

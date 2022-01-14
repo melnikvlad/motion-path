@@ -2,6 +2,7 @@ package com.example.motionpath.model.domain.mock_exercise
 
 import android.content.Context
 import com.example.motionpath.model.domain.Exercise
+import com.example.motionpath.model.domain.train.ExerciseItem
 import com.example.motionpath.util.IDENTIFIER_STRING
 
 data class MockExercise(
@@ -23,7 +24,7 @@ data class MockExercise(
     }
 }
 
-fun MockExercise.mapToExercise(index: Int = -1): Exercise {
+fun MockExercise.mapToExercise(index: Int = -1): Exercise{
     return Exercise(mockExercise = this, index = index + 1)
 }
 

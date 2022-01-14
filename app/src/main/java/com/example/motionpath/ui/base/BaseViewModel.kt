@@ -10,8 +10,8 @@ import kotlinx.coroutines.launch
 
 abstract class BaseViewModel<S, A, E>: ViewModel() {
 
-    private val _viewStates = MutableStateFlow<S?>(null)
-    fun viewStates(): StateFlow<S?> = _viewStates
+    private val _viewStates = MutableSharedFlow<S?>()
+    fun viewStates(): SharedFlow<S?> = _viewStates
 
     private val _viewActions = MutableSharedFlow<A?>()
     fun viewActions(): SharedFlow<A?> = _viewActions
@@ -22,7 +22,9 @@ abstract class BaseViewModel<S, A, E>: ViewModel() {
             ?: throw UninitializedPropertyAccessException("\"viewState\" was queried before being initialized")
         set(value) {
             _viewState = value
-            _viewStates.value = value
+            viewModelScope.launch {
+                _viewStates.emit(value)
+            }
         }
 
     private var _viewAction: A? = null
