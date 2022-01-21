@@ -4,24 +4,36 @@ import com.example.motionpath.model.domain.Exercise
 import com.example.motionpath.model.domain.client_category.CategoryType
 import com.example.motionpath.model.domain.train.*
 import java.util.*
-import kotlin.collections.ArrayList
 
 data class CreateTrainUiState(
     val mode: Mode = Mode.CREATE,
     val client: Client = Client(),
+    val clientPreviousTrains: List<Train> = emptyList(),
     val trainDate: TrainDate,
     val exercises: List<Exercise> = emptyList(),
-    val isCollapsed: Boolean = false
+    val isCollapsed: Boolean = false,
+    val searchClients: List<Client> = emptyList(),
 ) {
-    fun items() = mutableListOf(
-        TrainInfoItem(
-            ClientInfoItem(client),
-            TrainDateInfoItem(trainDate),
-            isCollapsed = isCollapsed
-        ),
-        SelectExerciseItem(),
-    ).apply {
-        addAll(exercises.map { ExerciseItem(it) })
+    fun items(): List<TrainItem> {
+        val result = mutableListOf<TrainItem>().apply {
+            add(
+                TrainInfoItem(
+                    ClientInfoItem(client, searchClients),
+                    TrainDateInfoItem(trainDate),
+                    isCollapsed = isCollapsed
+                )
+            )
+
+            if (clientPreviousTrains.isNotEmpty()) {
+                add(PreviousTrainsItem(clientPreviousTrains))
+            }
+
+            add(ExercisesTitleItem)
+
+            addAll(exercises.map { ExerciseItem(it) })
+        }
+
+        return result
     }
 }
 

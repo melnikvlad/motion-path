@@ -9,6 +9,7 @@ data class MockExercise(
     val id: Int,
     val categoryId: Int? = null,
     val name: String = "None",
+    val categoryName: String? = null,
     val muscleName: String? = null,
     val isSelected: Boolean = false,
     val viewType: MockExerciseType = MockExerciseType.ITEM
@@ -21,6 +22,10 @@ data class MockExercise(
 
     fun getLocalizedMuscleName(context: Context): String {
         return context.resources.getString(context.resources.getIdentifier(muscleName, IDENTIFIER_STRING, context.packageName))
+    }
+
+    fun getLocalizedCategoryName(context: Context): String {
+        return context.resources.getString(context.resources.getIdentifier(categoryName, IDENTIFIER_STRING, context.packageName))
     }
 }
 

@@ -13,7 +13,6 @@ import com.example.motionpath.domain.usecase.exercise.ExerciseUseCase
 import com.example.motionpath.domain.usecase.train.TrainUseCase
 import com.example.motionpath.model.domain.Exercise
 import com.example.motionpath.model.domain.mock_exercise.mapToExercise
-import com.example.motionpath.model.domain.train.TrainDateInfoItem
 import com.example.motionpath.ui.base.BaseViewModel
 import com.example.motionpath.ui.create_train.CreateTrainFragment.Companion.DEFAULT_ID
 import com.example.motionpath.ui.create_train.CreateTrainFragment.Companion.KEY_CLIENT_ID
@@ -30,10 +29,13 @@ import com.example.motionpath.util.validator.ValidationProcesser
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import java.lang.Exception
 import java.util.*
 
 @ExperimentalCoroutinesApi
@@ -55,6 +57,12 @@ class CreateTrainViewModel @AssistedInject constructor(
     private var timeStart = args.getSerializable(KEY_TRAIN_END_DATE) as? Date ?: date
     private var timeEnd = args.getSerializable(KEY_TRAIN_END_DATE) as? Date ?: timeStart.plusHour(1)
 
+    private var tempClientInfo: Client = Client()
+
+    private var tempSelectedExercise: List<Exercise> = emptyList()
+
+    private var searchClientsByQueryJob: Job? = null
+
     init {
         viewState = CreateTrainUiState(
             mode = mode,
@@ -69,6 +77,7 @@ class CreateTrainViewModel @AssistedInject constructor(
                 val exercises = selectedExercises.mapIndexed { index, mockExercise ->
                     mockExercise.mapToExercise(index)
                 }
+                tempSelectedExercise = exercises
                 viewState = viewState.copy(exercises = exercises)
             }
             .launchIn(viewModelScope)
@@ -85,25 +94,99 @@ class CreateTrainViewModel @AssistedInject constructor(
 
             is CreateTrainEvent.onRemoveExerciseClicked -> removeExercise(event.exercise)
 
-            CreateTrainEvent.onEditDateClicked -> {
-                viewAction = CreateTrainAction.OpenDatePickerAction(viewState.trainDate.day)
+            is CreateTrainEvent.onDateClicked -> {
+                viewAction = CreateTrainAction.OpenDatePickerAction(event.trainDate.day)
             }
 
-            is CreateTrainEvent.onDateChanged -> TODO()
+            is CreateTrainEvent.onDateUpdated -> updateDay(event.newDate)
 
-            is CreateTrainEvent.onDescriptionChanged -> TODO()
-            is CreateTrainEvent.onGoalChanged -> TODO()
-            is CreateTrainEvent.onNameChanged -> TODO()
-            is CreateTrainEvent.onTimeChanged -> {
+            is CreateTrainEvent.onTimeClicked -> {
+                viewAction = when (event.type) {
+                    PickedTime.START -> CreateTrainAction.OpenTimeStartPickerAction
+                    PickedTime.END -> CreateTrainAction.OpenTimeEndPickerAction
+                }
+            }
 
+            is CreateTrainEvent.onTimeUpdated -> updateTime(event.hour, event.minute, event.type)
+
+            is CreateTrainEvent.onDescriptionChanged -> {
+                //tempClientInfo = tempClientInfo.copy(description = event.description)
+            }
+            is CreateTrainEvent.onGoalChanged -> {
+                //tempClientInfo = tempClientInfo.copy(goal = event.goal)
+            }
+            is CreateTrainEvent.onNameChanged -> {
+                searchClientsByQueryJob?.cancel()
+                tempClientInfo = tempClientInfo.copy(name = event.name)
+
+                searchClientsByQueryJob = viewModelScope.launch {
+                    clientUseCase.searchClients(event.name)
+                        .collect { clients ->
+                            viewState = viewState.copy(searchClients = clients)
+                        }
+                }
+            }
+
+            is CreateTrainEvent.onSearchClientResultClicked -> {
+                viewModelScope.launch {
+                    tempClientInfo = event.client
+                    trainUseCase.getPreviousTrains(event.client.id, timeEnd.time)
+                        .collect { trains ->
+                            viewState = viewState.copy(
+                                client = event.client,
+                                searchClients = emptyList(),
+                                clientPreviousTrains = trains
+                            )
+                        }
+                }
             }
 
             CreateTrainEvent.onCollapseOrExpandClicked -> {
-                viewState = viewState.copy(isCollapsed = !viewState.isCollapsed)
+                viewState = viewState.copy(
+                    isCollapsed = !viewState.isCollapsed,
+                    client = tempClientInfo
+                )
+
+                if (!viewState.isCollapsed) {
+                    viewAction = CreateTrainAction.ScrollToStart
+                }
             }
 
-            is CreateTrainEvent.onSaveClicked -> {
-                applyTrainChanges(event.name, event.description, event.goal)
+            CreateTrainEvent.onSaveClicked -> saveTrain()
+
+            is CreateTrainEvent.onPreviousTrainClicked -> {
+
+                viewModelScope.launch {
+                    try {
+                        preSelectExercises(event.train.exercises)
+                    } catch (e: Exception) {
+                        return@launch
+                    }
+                }
+
+                val clientPreviousTrains = viewState.clientPreviousTrains
+                    .map {
+                        when {
+                            it.id == event.train.id -> {
+                                it.copy(isSelected = !it.isSelected)
+                            }
+                            it.isSelected -> {
+                                it.copy(isSelected = false)
+                            }
+                            else -> {
+                                it
+                            }
+                        }
+                    }
+
+                viewState = viewState.copy(
+                    exercises = event.train.exercises,
+                    clientPreviousTrains = clientPreviousTrains
+                )
+            }
+
+            CreateTrainEvent.onEditDateClicked -> {
+                //TODO
             }
         }
     }
@@ -115,9 +198,16 @@ class CreateTrainViewModel @AssistedInject constructor(
 
             preSelectExercises(exercises)
 
-            switchUI {
-                viewState = viewState.copy(client = client, exercises = exercises)
-            }
+            tempClientInfo = client
+
+            trainUseCase.getPreviousTrains(client.id, timeEnd.time)
+                .collect { trains ->
+                    viewState = viewState.copy(
+                        client = client,
+                        exercises = exercises,
+                        clientPreviousTrains = trains
+                    )
+                }
         }
     }
 
@@ -131,24 +221,30 @@ class CreateTrainViewModel @AssistedInject constructor(
         viewAction = CreateTrainAction.NavigateToSelectExerciseAction
     }
 
-    private fun preSelectExercises(exercises: List<Exercise>) {
-        viewModelScope.launch {
-            val mockExercises = exercises.map { it.mockExercise }
-            if (exerciseSelectionRepository.isEmpty()) {
-                exerciseSelectionRepository.addPreSelectedExercises(exercises = mockExercises)
-            }
+    private suspend fun preSelectExercises(exercises: List<Exercise>) {
+        val mockExercises = exercises.map { it.mockExercise }
+        if (exerciseSelectionRepository.isEmpty()) {
+            exerciseSelectionRepository.addPreSelectedExercises(exercises = mockExercises)
         }
     }
 
-    fun applyTrainChanges(name: String, description: String, goal: String) {
+    fun saveTrain() {
         if (validator.isValid()) {
             viewModelScope.executeIO {
                 //TODO: if clientID != null then call update with new name, goal and description
                 // otherwise create new client
-                val clientId = async { clientUseCase.createClient(name, description, goal) }
+                val insertClientJob = async {
+                    clientUseCase.createClient(tempClientInfo)
+                }
                 //TODO: if trainId != null then update with new time
+
+                val clientId: Int = if (viewState.client.id != -1)
+                    viewState.client.id
+                else
+                    insertClientJob.await().toInt()
+
                 val train = TrainEntity(
-                    clientId = clientId.await().toInt(),
+                    clientId = clientId,
                     timeStart = viewState.trainDate.timeStart,
                     timeEnd = viewState.trainDate.timeEnd,
                 )
@@ -169,7 +265,7 @@ class CreateTrainViewModel @AssistedInject constructor(
         }
     }
 
-    fun updateDay(day: Date) {
+    private fun updateDay(day: Date) {
         viewModelScope.executeUI {
             viewState = viewState.copy(
                 trainDate = viewState.trainDate.copy(day = day)
@@ -177,7 +273,7 @@ class CreateTrainViewModel @AssistedInject constructor(
         }
     }
 
-    fun updateTime(hour: Int, minute: Int, pickedTime: PickedTime) {
+    private fun updateTime(hour: Int, minute: Int, pickedTime: PickedTime) {
         when (pickedTime) {
             PickedTime.START -> {
                 viewModelScope.executeUI {

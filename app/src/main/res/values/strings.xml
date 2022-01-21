@@ -1,14 +1,16 @@
 <resources>
     <string name="app_name">Motion Path</string>
-    <string name="title_schedule">Schedule</string>
-    <string name="title_home">Home</string>
-    <string name="title_exercise">Exercise</string>
-    <string name="title_create_exercise">Create exercise</string>
-    <string name="title_clients">Clients</string>
-    <string name="title_profile">Profile</string>
-    <string name="title_create_session">Create session</string>
+    <string name="title_schedule">Расписание</string>
+    <string name="title_home">Главная</string>
+    <string name="title_exercise">Упражнения</string>
+    <string name="title_create_exercise">Создать упражнение</string>
+    <string name="title_clients">Клиенты</string>
+    <string name="title_profile">Профиль</string>
+    <string name="title_create_session">Создать тренировку</string>
 
-    <string name="main_add_session">Add</string>
+    <string name="edit">Изменить</string>
+
+    <string name="main_add_session">Добавить</string>
 
     <string name="menu_session_edit">Edit</string>
     <string name="menu_session_notification">Enable notification</string>
@@ -25,7 +27,18 @@
     <string name="create_session_edittext_hint_goal">Цель</string>
     <string name="create_session_exercise">Добавить упражнение</string>
 
+    <string name="create_train_client_info_title">О клиенте</string>
+    <string name="create_train_client_info_collapse">Свернуть</string>
+    <string name="create_train_client_info_expand">Развернуть</string>
+    <string name="create_train_previous_trains_title">Последние тренировки</string>
+
+    <string name="exercises_count_pattern">%1$d упражнений</string>
+
     <string name="action_save">Сохранить</string>
+
+    <string name="weight">Вес (кг)</string>
+
+    <string name="count">Повторы</string>
 
     <string name="category_name_personal">Персоналки</string>
     <string name="category_name_temp">Пробные</string>

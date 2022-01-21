@@ -6,12 +6,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.motionpath.R
 import com.example.motionpath.model.domain.Exercise
 import com.example.motionpath.model.domain.train.*
+import com.example.motionpath.ui.create_train.Client
+import com.example.motionpath.ui.create_train.TrainDate
 import com.example.motionpath.ui.create_train.adapter.ExerciseDiffCallback.Companion.PAYLOAD_CLIENT_DESCRIPTION
 import com.example.motionpath.ui.create_train.adapter.ExerciseDiffCallback.Companion.PAYLOAD_CLIENT_GOAL
 import com.example.motionpath.ui.create_train.adapter.ExerciseDiffCallback.Companion.PAYLOAD_CLIENT_NAME
@@ -21,12 +25,10 @@ import com.example.motionpath.ui.create_train.adapter.ExerciseDiffCallback.Compa
 import com.example.motionpath.ui.create_train.adapter.ExerciseDiffCallback.Companion.PAYLOAD_TRAIN_TIME_START
 import com.example.motionpath.util.CalendarManager
 import com.example.motionpath.util.extension.gone
-import com.example.motionpath.util.extension.hide
 import com.example.motionpath.util.extension.visible
 import com.example.motionpath.util.toStringFormat
 import com.google.android.material.textfield.TextInputEditText
-import org.w3c.dom.Text
-import java.lang.StringBuilder
+import com.google.android.material.textfield.TextInputLayout
 import java.util.*
 
 class TrainInfoAdapter(
@@ -34,6 +36,12 @@ class TrainInfoAdapter(
     private val onSelectExerciseClick: () -> Unit,
     private val onItemRemoveClick: (item: Exercise) -> Unit,
     private val onCollapseOrExpandClick: () -> Unit,
+    private val onNameChanged: (String) -> Unit,
+    private val onSearchClientResultClick: (Client) -> Unit,
+    private val onDateClicked: (TrainDate) -> Unit,
+    private val onTimeStartClicked: () -> Unit,
+    private val onTimeEndClicked: () -> Unit,
+    private val onPreviousTrainClicked: (Train) -> Unit
 ) : ListAdapter<TrainItem, RecyclerView.ViewHolder>(ExerciseDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -50,7 +58,7 @@ class TrainInfoAdapter(
             }
 
             TrainItem.EXERCISE -> {
-                ExerciseViewHolder(inflater.inflate(R.layout.item_exercise, parent, false))
+                ExerciseViewHolder(inflater.inflate(R.layout.item_create_train_exercise_2, parent, false))
             }
 
             TrainItem.SELECT_EXERCISE -> {
@@ -60,6 +68,18 @@ class TrainInfoAdapter(
                         parent,
                         false
                     )
+                )
+            }
+
+            TrainItem.PREV_TRAINS_ITEM -> {
+                PreviousTrainsViewHolder(
+                    inflater.inflate(R.layout.item_create_train_previous_trains, parent, false)
+                )
+            }
+
+            TrainItem.EXERCISES_TITLE -> {
+                ExercisesTitleViewHolder(
+                    inflater.inflate(R.layout.item_create_train_exercises_title, parent, false)
                 )
             }
 
@@ -79,8 +99,20 @@ class TrainInfoAdapter(
         getItem(position)?.let { item ->
             when (holder) {
                 is TrainInfoViewHolder -> {
+                    val searchAdapter = SearchClientResultAdapter(onClientClick = { onSearchClientResultClick(it) })
+
+                    holder.rvClientSearch.apply {
+                        setHasFixedSize(true)
+                        layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
+                        adapter = searchAdapter
+                    }
+                    holder.viewEditName.doOnTextChanged { text, start, before, count ->
+                        onNameChanged(text?.toString() ?: "")
+                    }
                     if (payloads.isEmpty() || payloads[0] !is Bundle) {
-                        holder.bind(item as TrainInfoItem)
+                        holder.bind(item as TrainInfoItem, searchAdapter) {
+                            onNameChanged(it)
+                        }
 
                     } else {
                         val diff = payloads[0] as Bundle
@@ -116,12 +148,18 @@ class TrainInfoAdapter(
                                 }
                             }
                             else -> {
-                                holder.bind(item as TrainInfoItem)
+                                holder.bind(item as TrainInfoItem, searchAdapter) {
+                                    onNameChanged(it)
+                                }
                             }
                         }
                     }
 
-                    holder.tvCollapse.setOnClickListener { v -> onCollapseOrExpandClick() }
+                    holder.tvExpandOrCollapse.setOnClickListener { v -> onCollapseOrExpandClick() }
+                    holder.viewEditDate.setOnClickListener { v -> onDateClicked((item as TrainInfoItem).trainDate.trainDate) }
+                    holder.viewEditTime.setOnClickListener { v -> onTimeStartClicked() }
+                    holder.viewEditTimeEnd.setOnClickListener { v -> onTimeEndClicked() }
+
                 }
 
                 is ExerciseViewHolder -> {
@@ -132,6 +170,8 @@ class TrainInfoAdapter(
                         val diff = payloads[0] as Bundle
                         if (diff.containsKey(PAYLOAD_EXERCISE_INDEX)) {
                             holder.bindIndex(diff.getInt(PAYLOAD_EXERCISE_INDEX))
+                        } else {
+                            holder.bind(item as ExerciseItem)
                         }
                     }
 
@@ -140,8 +180,18 @@ class TrainInfoAdapter(
                     }
                 }
 
-                is SelectExerciseViewHolder -> {
-                    holder.itemView.setOnClickListener { v -> onSelectExerciseClick() }
+                is ExercisesTitleViewHolder -> {
+                    holder.tvAddExercise.setOnClickListener { v -> onSelectExerciseClick() }
+                }
+
+                is PreviousTrainsViewHolder -> {
+                    val previousTrainAdapter = PreviousTrainsAdapter(context) { onPreviousTrainClicked(it) }
+                    holder.rvPrevTrains.apply {
+                        setHasFixedSize(true)
+                        layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
+                        adapter = previousTrainAdapter
+                    }
+                    holder.bind(item as PreviousTrainsItem, previousTrainAdapter)
                 }
 
                 else -> IllegalArgumentException("$holder is unknown")
@@ -153,37 +203,62 @@ class TrainInfoAdapter(
         return getItem(position).viewType.code
     }
 
+    inner class PreviousTrainsViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+
+        val rvPrevTrains = view.findViewById<RecyclerView>(R.id.rv_previous_trains)
+
+        fun bind(item: PreviousTrainsItem, previousTrainAdapter: PreviousTrainsAdapter) {
+            previousTrainAdapter.submitList(item.trains)
+        }
+    }
+
     inner class TrainInfoViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val viewEditName: TextInputEditText = view.findViewById(R.id.input_edit_name)
+
+        private val viewInputName: TextInputLayout = view.findViewById(R.id.input_name)
+        private val viewInputDescription: TextInputLayout = view.findViewById(R.id.input_description)
+        private val viewInputGoal: TextInputLayout = view.findViewById(R.id.input_goal)
+
+        val viewInputDate: TextInputLayout = view.findViewById(R.id.input_date)
+        val viewInputTime: TextInputLayout = view.findViewById(R.id.input_time)
+        val viewInputTimeEnd: TextInputLayout = view.findViewById(R.id.input_time_end)
+
+        val viewEditName: TextInputEditText = view.findViewById(R.id.input_edit_name)
         private val viewEditDescription: TextInputEditText = view.findViewById(R.id.input_edit_description)
         private val viewEditGoal: TextInputEditText = view.findViewById(R.id.input_edit_goal)
 
-        private val viewEditDate: TextInputEditText = view.findViewById(R.id.input_edit_date)
-        private val viewEditTime: TextInputEditText = view.findViewById(R.id.input_edit_time)
-        private val viewEditTimeEnd: TextInputEditText = view.findViewById(R.id.input_edit_time_end)
+        val viewEditDate: TextInputEditText = view.findViewById(R.id.input_edit_date)
+        val viewEditTime: TextInputEditText = view.findViewById(R.id.input_edit_time)
+        val viewEditTimeEnd: TextInputEditText = view.findViewById(R.id.input_edit_time_end)
 
-        val tvCollapse: TextView = view.findViewById(R.id.tv_collapse)
+        val rvClientSearch: RecyclerView = view.findViewById(R.id.rv_client_search)
+
         val tvCollapseInfo: TextView = view.findViewById(R.id.tv_collapsed_info)
+        val tvExpandOrCollapse: TextView = view.findViewById(R.id.tv_client_info_collapse)
 
-        fun bind(item: TrainInfoItem) {
+        fun bind(item: TrainInfoItem, searchClientAdapter: SearchClientResultAdapter, onTextChanged: (String) -> Unit) {
             if (!item.isCollapsed) {
-                bind(item.client)
+                bind(item.client, searchClientAdapter)
                 bind(item.trainDate)
 
-                viewEditName.visible()
-                viewEditDescription.visible()
-                viewEditGoal.visible()
-                viewEditDate.visible()
-                viewEditTime.visible()
-                viewEditTimeEnd.visible()
+                viewInputName.visible()
+                viewInputDescription.visible()
+                viewInputGoal.visible()
+                viewInputDate.visible()
+                viewInputTime.visible()
+                viewInputTimeEnd.visible()
+                rvClientSearch.visible()
                 tvCollapseInfo.gone()
+
+                tvExpandOrCollapse.text = context.getString(R.string.create_train_client_info_collapse)
+
             } else {
-                viewEditName.gone()
-                viewEditDescription.gone()
-                viewEditGoal.gone()
-                viewEditDate.gone()
-                viewEditTime.gone()
-                viewEditTimeEnd.gone()
+                viewInputName.gone()
+                viewInputDescription.gone()
+                viewInputGoal.gone()
+                viewInputDate.gone()
+                viewInputTime.gone()
+                viewInputTimeEnd.gone()
+                rvClientSearch.gone()
                 tvCollapseInfo.visible()
 
                 val sb = StringBuilder()
@@ -196,13 +271,16 @@ class TrainInfoAdapter(
                     .append("${viewEditDate.text} ${viewEditTime.text} - ${viewEditTimeEnd.text}")
 
                 tvCollapseInfo.text = sb.toString()
+
+                tvExpandOrCollapse.text = context.getString(R.string.create_train_client_info_expand)
             }
         }
 
-        fun bind(item: ClientInfoItem) {
+        fun bind(item: ClientInfoItem, searchClientAdapter: SearchClientResultAdapter) {
             bindName(item.client.name)
             bindDescription(item.client.description)
             bindGoal(item.client.goal)
+            bindSearchResult(item.searchClientsResult, searchClientAdapter)
         }
 
         fun bindName(name: String) {
@@ -221,6 +299,10 @@ class TrainInfoAdapter(
             if (goal.isNotEmpty()) {
                 viewEditGoal.setText(goal, TextView.BufferType.NORMAL)
             }
+        }
+
+        fun bindSearchResult(result: List<Client>, searchClientAdapter: SearchClientResultAdapter) {
+            searchClientAdapter.submitList(result)
         }
 
         fun bind(item: TrainDateInfoItem) {
@@ -253,9 +335,9 @@ class TrainInfoAdapter(
 
     inner class ExerciseViewHolder(v: View) : RecyclerView.ViewHolder(v) {
 
-        private val tvExerciseName = v.findViewById<TextView>(R.id.tv_exercise_name)
-        private val tvExerciseIndex = v.findViewById<TextView>(R.id.tv_exercise_index)
-        val viewClose = v.findViewById<View>(R.id.view_close)
+        private val tvExerciseName = v.findViewById<TextView>(R.id.tv_exrcise_name)
+        private val tvExerciseIndex = v.findViewById<TextView>(R.id.tv_index)
+        val viewClose = v.findViewById<View>(R.id.tv_delete)
 
         fun bind(item: ExerciseItem) {
             bindName(item.exercise)
@@ -272,6 +354,12 @@ class TrainInfoAdapter(
     }
 
     inner class SelectExerciseViewHolder(v: View) : RecyclerView.ViewHolder(v)
+
+    inner class ExercisesTitleViewHolder(v: View) : RecyclerView.ViewHolder(v) {
+
+        val tvAddExercise: TextView = v.findViewById(R.id.tv_add_exrcise)
+
+    }
 }
 
 class ExerciseDiffCallback : DiffUtil.ItemCallback<TrainItem>() {

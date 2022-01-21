@@ -7,6 +7,8 @@ import kotlinx.coroutines.flow.Flow
 interface ClientRepository {
     fun getClients(): Flow<List<ClientEntity>>
 
+    fun searchClients(query: String): Flow<List<ClientEntity>>
+
     suspend fun getClientById(clientId: Int): ClientEntity?
 
     suspend fun createClient(clientEntity: ClientEntity): Long

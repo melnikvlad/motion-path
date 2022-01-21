@@ -1,11 +1,11 @@
 package com.example.motionpath.domain.usecase.mock_exercise
 
 import com.example.motionpath.data.model.entity.toDomain
+import com.example.motionpath.domain.ExerciseSelectionRepository
 import com.example.motionpath.domain.MockExerciseRepository
 import com.example.motionpath.model.domain.mock_exercise.MockExercise
 import com.example.motionpath.model.domain.mock_exercise.MockExerciseItemId
 import com.example.motionpath.model.domain.mock_exercise.MockExerciseType
-import com.example.motionpath.domain.ExerciseSelectionRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 
@@ -16,7 +16,9 @@ class GetMockExercicesUseCase(
     operator fun invoke(category: MockExercise): Flow<List<MockExercise>> {
         val selectedExercises = exerciseSelectionRepository.getSelectedExercises()
             .map { list ->
-                list.map { it.copy(viewType = MockExerciseType.ITEM_SELECTED) }
+                list
+                    .map { it.copy(viewType = MockExerciseType.ITEM_SELECTED) }
+                    .groupBy { it.id }
             }
 
         val categoryExercises = repository.get(category.id)
@@ -42,7 +44,15 @@ class GetMockExercicesUseCase(
                 )
 
                 // Add selected exercises
-                result.addAll(selected)
+
+                selected.keys.forEach { key ->
+                    val list = selected[key]
+                    list?.let {
+                        val item = it[0]
+                        item.exerciseSelectedCount = it.size
+                        result.add(item)
+                    }
+                }
             }
 
             // Add current category name

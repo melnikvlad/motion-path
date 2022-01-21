@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "d43de098088f213abc6c1899aaa9b3a1",
+    "identityHash": "5e104299e8340eb8053b7b08707cd718",
     "entities": [
       {
         "tableName": "clients",
@@ -120,7 +120,7 @@
       },
       {
         "tableName": "exercises",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `trainId` INTEGER NOT NULL, `mockExerciseCategoryId` INTEGER, `mockExerciseId` INTEGER NOT NULL, `mockExerciseName` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `trainId` INTEGER NOT NULL, `mockExerciseid` INTEGER, `categoryId` INTEGER, `categoryName` TEXT, `exerciseName` TEXT NOT NULL, `muscleName` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -135,22 +135,34 @@
             "notNull": true
           },
           {
-            "fieldPath": "mockExerciseCategoryId",
-            "columnName": "mockExerciseCategoryId",
+            "fieldPath": "mockExercise.mockExerciseid",
+            "columnName": "mockExerciseid",
             "affinity": "INTEGER",
             "notNull": false
           },
           {
-            "fieldPath": "mockExerciseId",
-            "columnName": "mockExerciseId",
+            "fieldPath": "mockExercise.categoryId",
+            "columnName": "categoryId",
             "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "mockExercise.categoryName",
+            "columnName": "categoryName",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "mockExercise.exerciseName",
+            "columnName": "exerciseName",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
-            "fieldPath": "mockExerciseName",
-            "columnName": "mockExerciseName",
+            "fieldPath": "mockExercise.muscleName",
+            "columnName": "muscleName",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -164,18 +176,24 @@
       },
       {
         "tableName": "mock_exercises",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `parentId` INTEGER, `exerciseName` TEXT NOT NULL, `muscleName` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`mockExerciseid` INTEGER PRIMARY KEY AUTOINCREMENT, `categoryId` INTEGER, `categoryName` TEXT, `exerciseName` TEXT NOT NULL, `muscleName` TEXT)",
         "fields": [
           {
-            "fieldPath": "id",
-            "columnName": "id",
+            "fieldPath": "mockExerciseid",
+            "columnName": "mockExerciseid",
             "affinity": "INTEGER",
             "notNull": false
           },
           {
-            "fieldPath": "parentId",
-            "columnName": "parentId",
+            "fieldPath": "categoryId",
+            "columnName": "categoryId",
             "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "categoryName",
+            "columnName": "categoryName",
+            "affinity": "TEXT",
             "notNull": false
           },
           {
@@ -193,7 +211,7 @@
         ],
         "primaryKey": {
           "columnNames": [
-            "id"
+            "mockExerciseid"
           ],
           "autoGenerate": true
         },
@@ -204,7 +222,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd43de098088f213abc6c1899aaa9b3a1')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5e104299e8340eb8053b7b08707cd718')"
     ]
   }
 }

@@ -8,5 +8,11 @@ sealed class CreateTrainAction {
 
     object NavigateToTrainsAction: CreateTrainAction()
 
+    object OpenTimeStartPickerAction: CreateTrainAction()
+
+    object OpenTimeEndPickerAction: CreateTrainAction()
+
+    object ScrollToStart: CreateTrainAction()
+
     data class OpenDatePickerAction(val day: Date): CreateTrainAction()
 }

@@ -19,6 +19,10 @@ interface TrainDao {
     @Query("SELECT * FROM trains WHERE id = :trainId")
     fun getTrainWithExercises(trainId: Int): TrainWithExercises
 
+    @Transaction
+    @Query("SELECT * FROM trains WHERE clientId = :clientId AND timeEnd < :currentTrainTime")
+    fun getClientTrainsWithExercises(clientId: Int, currentTrainTime: Long): Flow<List<TrainWithExercises>>
+
     @Query("DELETE FROM trains WHERE clientId = :clientId")
     fun deleteAllClientTrains(clientId: Int)
 

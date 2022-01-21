@@ -20,6 +20,10 @@ class TrainRepositoryImpl(private val trainDao: TrainDao): TrainRepository {
         return trainDao.getTrainWithExercises(trainId)
     }
 
+    override fun getClientTrainsWithExercises(clientId: Int, currentTrainTime: Long): Flow<List<TrainWithExercises>> {
+        return trainDao.getClientTrainsWithExercises(clientId, currentTrainTime)
+    }
+
     override suspend fun deleteTrain(train: TrainEntity) {
         trainDao.deleteTrain(train)
     }

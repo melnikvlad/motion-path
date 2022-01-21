@@ -101,7 +101,8 @@ object AppModule {
         GetClientUseCase(repository),
         GetClientsUseCase(repository),
         GetClientsWithTrainsUseCase(repository),
-        CreateClientUseCase(repository)
+        CreateClientUseCase(repository),
+        SearchClientsByName(repository)
     )
 
     @Provides
@@ -111,7 +112,8 @@ object AppModule {
         DeleteTrainUseCase(repository),
         GetTrainsForDateUseCase(repository),
         DeleteClientTrainsUseCase(repository),
-        GetTrainExercisesUseCase(repository)
+        GetTrainExercisesUseCase(repository),
+        GetClientPreviousTrains(repository)
     )
 
     @Provides

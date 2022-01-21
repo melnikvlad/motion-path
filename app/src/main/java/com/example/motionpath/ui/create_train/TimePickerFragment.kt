@@ -8,7 +8,7 @@ import android.widget.TimePicker
 import androidx.fragment.app.DialogFragment
 import java.util.*
 
-class TimePickerFragment() : DialogFragment(), TimePickerDialog.OnTimeSetListener {
+class TimePickerFragment : DialogFragment(), TimePickerDialog.OnTimeSetListener {
 
     private var onTimeSelected: ((hourOfDay: Int, minute: Int) -> Unit)? = null
 

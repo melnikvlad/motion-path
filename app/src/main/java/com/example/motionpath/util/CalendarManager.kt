@@ -14,6 +14,8 @@ object CalendarManager {
     const val MONTH_YEAR_FORMAT = "MMMM yyyy"
     const val HOUR_MiNUTE_FORMAT = "HH:mm"
     const val DAY_MONTH_WEEKDAY = "dd MMMM, EEEE"
+    const val MONTH_DAY_FORMAT_SHORT = "dd.MM"
+    const val YEAR = "yyyy"
 
     fun getDaysAfter(startDate: Date, count: Int): List<CalendarDay> {
         val datesInRange = mutableListOf<CalendarDay>()

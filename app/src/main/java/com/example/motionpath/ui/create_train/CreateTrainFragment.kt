@@ -18,8 +18,6 @@ import com.example.motionpath.ui.MainActivity
 import com.example.motionpath.ui.base.BaseFragment
 import com.example.motionpath.ui.create_train.adapter.TrainInfoAdapter
 import com.example.motionpath.util.DialogHelpers
-import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
@@ -77,25 +75,19 @@ class CreateTrainFragment : BaseFragment() {
             requireContext(),
             onSelectExerciseClick = { viewModel.processEvent(CreateTrainEvent.onAddExerciseClicked) },
             onItemRemoveClick = { viewModel.processEvent(CreateTrainEvent.onRemoveExerciseClicked(it)) },
-            onCollapseOrExpandClick = { viewModel.processEvent(CreateTrainEvent.onCollapseOrExpandClicked) }
+            onCollapseOrExpandClick = { viewModel.processEvent(CreateTrainEvent.onCollapseOrExpandClicked) },
+            onNameChanged = { viewModel.processEvent(CreateTrainEvent.onNameChanged(it)) },
+            onSearchClientResultClick = { viewModel.processEvent(CreateTrainEvent.onSearchClientResultClicked(it)) },
+            onDateClicked = { viewModel.processEvent(CreateTrainEvent.onDateClicked(it)) },
+            onTimeStartClicked = { viewModel.processEvent(CreateTrainEvent.onTimeClicked(PickedTime.START)) },
+            onTimeEndClicked = { viewModel.processEvent(CreateTrainEvent.onTimeClicked(PickedTime.END)) },
+            onPreviousTrainClicked = { viewModel.processEvent(CreateTrainEvent.onPreviousTrainClicked(it)) }
         )
     }
 
     private lateinit var viewToolbar: Toolbar
-    private lateinit var viewInputDate: TextInputLayout
-    private lateinit var viewEditDate: TextInputEditText
-    private lateinit var viewInputTime: TextInputLayout
-    private lateinit var viewEditTime: TextInputEditText
-    private lateinit var viewEditTimeEnd: TextInputEditText
-    private lateinit var viewInputName: TextInputLayout
-    private lateinit var viewEditName: TextInputEditText
-    private lateinit var viewInputDescription: TextInputLayout
-    private lateinit var viewEditDescription: TextInputEditText
-    private lateinit var viewInputGoal: TextInputLayout
-    private lateinit var viewEditGoal: TextInputEditText
     private lateinit var tvSave: TextView
-    private lateinit var tvAddExercises: TextView
-    private lateinit var rvExrcises: RecyclerView
+    private lateinit var recyclerView: RecyclerView
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -130,22 +122,13 @@ class CreateTrainFragment : BaseFragment() {
         viewToolbar = view.findViewById(R.id.toolbar_create_session)
 
         tvSave = view.findViewById(R.id.tv_save)
-        rvExrcises = view.findViewById(R.id.rv_exercises)
+        recyclerView = view.findViewById(R.id.rv_exercises)
 
         initToolbar()
         initRecyclerView()
 
-//        viewEditTime.setOnClickListener { showTimePickerDialog(PickedTime.START) }
-//        viewEditTimeEnd.setOnClickListener { showTimePickerDialog(PickedTime.END) }
-
         tvSave.setOnClickListener {
-            viewModel.processEvent(
-                CreateTrainEvent.onSaveClicked(
-                    viewEditName.text.toString(),
-                    viewEditDescription.text.toString(),
-                    viewEditGoal.text.toString()
-                )
-            )
+            viewModel.processEvent(CreateTrainEvent.onSaveClicked)
         }
     }
 
@@ -177,6 +160,18 @@ class CreateTrainFragment : BaseFragment() {
                         is CreateTrainAction.OpenDatePickerAction -> {
                             showDatePickerDialog(it.day)
                         }
+
+                        is CreateTrainAction.OpenTimeStartPickerAction -> {
+                            showTimePickerDialog(PickedTime.START)
+                        }
+
+                        is CreateTrainAction.OpenTimeEndPickerAction -> {
+                            showTimePickerDialog(PickedTime.END)
+                        }
+
+                        CreateTrainAction.ScrollToStart -> {
+                            recyclerView.smoothScrollToPosition(0)
+                        }
                     }
                 }
             }
@@ -184,17 +179,16 @@ class CreateTrainFragment : BaseFragment() {
     }
 
     private fun initRecyclerView() {
-        rvExrcises.itemAnimator = null
-        rvExrcises.layoutManager = LinearLayoutManager(requireContext())
-        rvExrcises.setHasFixedSize(true)
-        rvExrcises.adapter = adapter
+        recyclerView.itemAnimator = null
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.adapter = adapter
     }
 
     private fun showDatePickerDialog(initialDate: Date? = null) {
         DialogHelpers.showDatePickerDialog(
             requireContext(),
             initialDate,
-            onDateSelectedCallback = { viewModel.updateDay(it) }
+            onDateSelectedCallback = { viewModel.processEvent(CreateTrainEvent.onDateUpdated(it)) }
         )
     }
 
@@ -207,7 +201,7 @@ class CreateTrainFragment : BaseFragment() {
         fragment.apply {
             setOnTimeSelectedCallback(
                 onTimeSelected = { hourOfDay, minute ->
-                    viewModel.updateTime(hourOfDay, minute, pickedTime)
+                    viewModel.processEvent(CreateTrainEvent.onTimeUpdated(hourOfDay, minute, pickedTime))
                 }
             )
         }

@@ -12,6 +12,8 @@ interface TrainRepository {
 
     suspend fun getTrainWithExercises(trainId: Int): TrainWithExercises
 
+    fun getClientTrainsWithExercises(clientId: Int, currentTrainTime: Long): Flow<List<TrainWithExercises>>
+
     suspend fun deleteTrain(train: TrainEntity)
 
     suspend fun deleteAllClientTrains(clientId: Int)

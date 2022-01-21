@@ -1,12 +1,12 @@
 package com.example.motionpath.domain.usecase.client
 
 import com.example.motionpath.data.model.entity.ClientEntity
+import com.example.motionpath.data.model.entity.toEntity
 import com.example.motionpath.domain.ClientRepository
+import com.example.motionpath.ui.create_train.Client
 
 class CreateClientUseCase(private val clientRepository: ClientRepository) {
-    suspend operator fun invoke(name: String, description: String, goal: String): Long {
-        return clientRepository.createClient(
-            ClientEntity(name = name, description = description, goal = goal)
-        )
+    suspend operator fun invoke(client: Client): Long {
+        return clientRepository.createClient(client.toEntity())
     }
 }

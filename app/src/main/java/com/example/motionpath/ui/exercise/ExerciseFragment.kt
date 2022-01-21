@@ -29,9 +29,6 @@ class ExerciseFragment : BaseFragment() {
         )
     }
 
-    @Inject
-    lateinit var exerciseSelectionRepository: ExerciseSelectionRepository
-
     private lateinit var rv: RecyclerView
     private lateinit var toolbar: Toolbar
 
@@ -44,7 +41,9 @@ class ExerciseFragment : BaseFragment() {
             },
             onItemRemoveClick = {
                 viewModel.processEvent(ExerciseEvent.onItemRemoveClicked(it))
-            }
+            },
+            onItemMinusClick = { viewModel.processEvent(ExerciseEvent.onItemMinusClicked(it)) },
+            onItemPlusClick = { viewModel.processEvent(ExerciseEvent.onItemPlusClicked(it)) }
         )
     }
 
@@ -102,7 +101,7 @@ class ExerciseFragment : BaseFragment() {
 
     private fun initRecyclerView() {
         rv.itemAnimator = null
-        rv.layoutManager = LinearLayoutManager(requireContext())
+        rv.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         rv.setHasFixedSize(true)
         rv.adapter = adapter
     }

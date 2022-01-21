@@ -69,6 +69,30 @@ class ExerciseViewModel @Inject constructor(
             ExerciseEvent.onSearchViewClicked -> {
                 viewState = viewState.copy(depth = SelectionDepth.SEARCH)
             }
+
+            is ExerciseEvent.onItemMinusClicked -> {
+                viewModelScope.launch {
+                    exerciseSelectionRepository.removeExercise(event.item)
+                }
+
+                when(viewState.depth) {
+                    SelectionDepth.CATEGORY -> loadCategories()
+                    SelectionDepth.EXERCISE -> currentCategory?.let { loadExercises(it) }
+                    SelectionDepth.SEARCH -> Unit
+                }
+            }
+
+            is ExerciseEvent.onItemPlusClicked -> {
+                viewModelScope.launch {
+                    exerciseSelectionRepository.addExercise(event.item)
+                }
+
+                when(viewState.depth) {
+                    SelectionDepth.CATEGORY -> loadCategories()
+                    SelectionDepth.EXERCISE -> currentCategory?.let { loadExercises(it) }
+                    SelectionDepth.SEARCH -> Unit
+                }
+            }
         }
     }
 

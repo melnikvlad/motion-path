@@ -38,6 +38,10 @@ class GetTrainInfoUseCase @Inject constructor(
                 }
             }
 
+            val previousTrains = async {
+
+            }
+
             Pair(client.await() ?: Client(), exercises.await())
         }
 

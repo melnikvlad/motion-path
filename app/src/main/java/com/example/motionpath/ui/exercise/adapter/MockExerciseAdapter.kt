@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -13,11 +14,16 @@ import com.example.motionpath.R
 import com.example.motionpath.model.domain.mock_exercise.MockExercise
 import com.example.motionpath.model.domain.mock_exercise.MockExerciseType
 import com.example.motionpath.ui.exercise.adapter.ExerciseDiffCallback.Companion.PAYLOAD_COUNT
+import com.example.motionpath.util.extension.gone
+import com.example.motionpath.util.extension.setVisible
+import com.example.motionpath.util.extension.visible
 
 class MockExerciseAdapter(
     private val context: Context,
     private val onItemClick: (item: MockExercise) -> Unit,
     private val onItemRemoveClick: (item: MockExercise) -> Unit,
+    private val onItemMinusClick: (item: MockExercise) -> Unit,
+    private val onItemPlusClick: (item: MockExercise) -> Unit,
 ) : ListAdapter<MockExercise, RecyclerView.ViewHolder>(ExerciseDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -91,7 +97,9 @@ class MockExerciseAdapter(
 
                 is SelectedExerciseViewHolder -> {
                     holder.bind(item)
-                    holder.tvClose.setOnClickListener { v -> onItemRemoveClick(item) }
+                    holder.tvMinus.setOnClickListener { onItemMinusClick(item) }
+                    holder.tvPlus.setOnClickListener { onItemPlusClick(item) }
+                    //holder.tvClose.setOnClickListener { v -> onItemRemoveClick(item) }
                 }
             }
         }
@@ -131,7 +139,10 @@ class MockExerciseAdapter(
     inner class SelectedExerciseViewHolder(v: View) : RecyclerView.ViewHolder(v) {
 
         private val tvName = v.findViewById<TextView>(R.id.tv_name)
-        val tvClose = v.findViewById<TextView>(R.id.tv_close)
+        private val llSelectionCounter = v.findViewById<LinearLayout>(R.id.ll_selection_counter)
+        val tvMinus = v.findViewById<TextView>(R.id.tv_minus)
+        private val tvCount = v.findViewById<TextView>(R.id.tv_count)
+        val tvPlus = v.findViewById<TextView>(R.id.tv_plus)
 
         fun bind(item: MockExercise) {
             bindName(item)
@@ -139,12 +150,15 @@ class MockExerciseAdapter(
 
         private fun bindName(item: MockExercise) {
             tvName.text = item.getLocalizedName(context)
+            tvCount.text = item.exerciseSelectedCount.toString()
+            llSelectionCounter.setVisible(item.exerciseSelectedCount > 0)
         }
     }
 
     inner class ExerciseViewHolder(v: View) : RecyclerView.ViewHolder(v) {
 
         private val tvName = v.findViewById<TextView>(R.id.tv_name)
+        private val tvCount = v.findViewById<TextView>(R.id.tv_count)
 
         fun bind(item: MockExercise) {
             bindName(item)
@@ -157,10 +171,10 @@ class MockExerciseAdapter(
 
         fun bindSelection(exerciseSelectedCount: Int) {
             if (exerciseSelectedCount != 0) {
-                tvName.text = StringBuilder(tvName.text)
-                    .append(" : ")
-                    .append(exerciseSelectedCount)
-                    .toString()
+                tvCount.visible()
+                tvCount.text = exerciseSelectedCount.toString()
+            } else {
+                tvCount.gone()
             }
         }
     }
