@@ -13,6 +13,9 @@ object CalendarManager {
     const val MONTH_DAY_FORMAT = "MMMM dd"
     const val MONTH_YEAR_FORMAT = "MMMM yyyy"
     const val HOUR_MiNUTE_FORMAT = "HH:mm"
+    const val DAY_MONTH_WEEKDAY = "dd MMMM, EEEE"
+    const val MONTH_DAY_FORMAT_SHORT = "dd.MM"
+    const val YEAR = "yyyy"
 
     fun getDaysAfter(startDate: Date, count: Int): List<CalendarDay> {
         val datesInRange = mutableListOf<CalendarDay>()
@@ -42,7 +45,7 @@ object CalendarManager {
 
         val endCalendar = GregorianCalendar()
         endCalendar.time = startDate
-        endCalendar.add(Calendar.DATE, count.unaryMinus())
+        endCalendar.add(Calendar.DATE, (count - 1).unaryMinus())
 
         while (startCalendar.after(endCalendar)) {
             datesInRange.add(CalendarDay(startCalendar.time))
@@ -51,16 +54,20 @@ object CalendarManager {
         return datesInRange
     }
 
-    fun getFreeDayDividedByHours(startDate: Date): List<Date> {
+    fun getDayDividedByHours(startDate: Date, endDate: Date? = null): List<Date> {
         val dates = mutableListOf<Date>()
 
-        val startCalendar = GregorianCalendar()
+        val startCalendar = Calendar.getInstance()
         startCalendar.time = startDate
-        startCalendar.set(Calendar.HOUR_OF_DAY, 6)
 
-        val endCalendar = GregorianCalendar()
-        endCalendar.time = startCalendar.time
-        endCalendar.add(Calendar.HOUR_OF_DAY, 19)
+        val endCalendar = Calendar.getInstance()
+        if (endDate == null) {
+            endCalendar.time = startCalendar.time
+            endCalendar.add(Calendar.HOUR_OF_DAY, 19)
+        } else {
+            endCalendar.time = endDate
+        }
+        //endCalendar.set(Calendar.MINUTE, 0)
 
         while (startCalendar.before(endCalendar)) {
             dates.add(startCalendar.time)
@@ -69,6 +76,80 @@ object CalendarManager {
 
         return dates
     }
+
+    fun getHoursBetweenDates(startDate: Date, endDate: Date): List<Date> {
+        var forceQuit = false
+        val dates = mutableListOf<Date>()
+
+        val startCalendar = Calendar.getInstance()
+        startCalendar.time = startDate
+        startCalendar.set(Calendar.SECOND, 0)
+
+        val endCalendar = Calendar.getInstance()
+        endCalendar.time = endDate
+        endCalendar.set(Calendar.SECOND, 0)
+
+        while (startCalendar.before(endCalendar) && !forceQuit) {
+            val difference = getDifference(startCalendar.time, endCalendar.time)
+            val hasHourBetween = difference.second >= 1
+            if (hasHourBetween) {
+                if (startCalendar.get(Calendar.MINUTE) > 0) {
+                    startCalendar.add(Calendar.MINUTE, 60 - startCalendar.get(Calendar.MINUTE))
+                } else {
+                    startCalendar.add(Calendar.HOUR_OF_DAY, 1)
+                }
+                dates.add(startCalendar.time)
+            } else {
+                startCalendar.add(Calendar.MINUTE, difference.third.toInt())
+                dates.add(startCalendar.time)
+                forceQuit = true
+            }
+        }
+
+        return dates
+    }
+}
+
+fun Date.getStartOfWorkDay(): Date {
+    val cal = Calendar.getInstance()
+    cal.time = this
+    cal.set(Calendar.HOUR_OF_DAY, 6)
+    cal.set(Calendar.MINUTE, 0)
+    cal.set(Calendar.SECOND, 0)
+    return cal.time
+}
+
+fun Date.getEndOfDay(): Date {
+    val cal = Calendar.getInstance()
+    cal.time = this
+    cal.set(Calendar.HOUR_OF_DAY, 23)
+    cal.set(Calendar.MINUTE, 59)
+    cal.set(Calendar.SECOND, 0)
+    return cal.time
+}
+
+fun Date.getStartOfDay(): Date {
+    val cal = Calendar.getInstance()
+    cal.time = this
+    cal.set(Calendar.HOUR_OF_DAY, 0)
+    cal.set(Calendar.MINUTE, 0)
+    return cal.time
+}
+
+fun getDifference(startDate: Date, endDate: Date): Triple<Long, Long, Long> {
+    var different = endDate.time - startDate.time
+    val secondsInMilli: Long = 1000
+    val minutesInMilli = secondsInMilli * 60
+    val hoursInMilli = minutesInMilli * 60
+    val daysInMilli = hoursInMilli * 24
+
+    val elapsedDays = different / daysInMilli
+    different %= daysInMilli
+    val elapsedHours = different / hoursInMilli
+    different = different % hoursInMilli
+    val elapsedMinutes = different / minutesInMilli
+
+    return Triple(elapsedDays, elapsedHours, elapsedMinutes)
 }
 
 fun Date.getWeekDay(): String {
@@ -91,10 +172,44 @@ fun Date.toStringFormat(stringFormat: String = CalendarManager.DEFAULT_FORMAT): 
     }
 }
 
-fun Date.getHour(): Int {
-    val cal = Calendar.getInstance()
-    cal.time = this
-    return cal[Calendar.HOUR_OF_DAY]
+fun Date.plusHour(count: Int): Date {
+    val calendar = Calendar.getInstance()
+    calendar.time = this
+    calendar.add(Calendar.HOUR_OF_DAY, count)
+    return calendar.time
+}
+
+fun Date.setDay(newDate: Date): Date {
+    val calendar = Calendar.getInstance()
+    calendar.time = this
+
+    val newCalendar = Calendar.getInstance()
+    newCalendar.time = newDate
+    newCalendar.set(Calendar.HOUR, calendar[Calendar.HOUR_OF_DAY])
+    newCalendar.set(Calendar.MINUTE, calendar[Calendar.MINUTE])
+    return newCalendar.time
+}
+
+fun Date.newTime(hour: Int, minutes: Int): Date {
+    val calendar = Calendar.getInstance()
+    calendar.time = this
+    calendar.set(Calendar.HOUR_OF_DAY, hour)
+    calendar.set(Calendar.MINUTE, minutes)
+    return calendar.time
+}
+
+fun Date.setHour(value: Int): Date {
+    val calendar = Calendar.getInstance()
+    calendar.time = this
+    calendar.set(Calendar.HOUR_OF_DAY, value)
+    return calendar.time
+}
+
+fun Date.setMinutesValue(value: Int): Date {
+    val calendar = Calendar.getInstance()
+    calendar.time = this
+    calendar.set(Calendar.MINUTE, value)
+    return calendar.time
 }
 
 fun Date.isToday(): Boolean {

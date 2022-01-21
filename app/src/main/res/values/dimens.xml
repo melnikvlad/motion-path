@@ -12,6 +12,9 @@
     <dimen name="main_header_selected_date">24sp</dimen>
     <dimen name="main_header_add_session">16sp</dimen>
     <dimen name="default_corner_radius">4dp</dimen>
+    <dimen name="exercise_item_corner_radius">8dp</dimen>
 
     <dimen name="middle_text_size">14sp</dimen>
+
+    <dimen name="item_client_category_size">106dp</dimen>
 </resources>

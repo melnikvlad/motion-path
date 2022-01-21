@@ -35,6 +35,13 @@ fun View.setVisibleOrHide(condition: Boolean) {
     }
 }
 
+fun View.setVisibleOrGone(condition: Boolean) {
+    when {
+        condition -> visible()
+        else -> gone()
+    }
+}
+
 fun View.isVisible() = visibility == View.VISIBLE
 
 fun View.isGone() = visibility == View.GONE

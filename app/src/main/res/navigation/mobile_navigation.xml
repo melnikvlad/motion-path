@@ -3,28 +3,75 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_main">
+    app:startDestination="@+id/navigation_schedule">
 
     <fragment
-        android:id="@+id/navigation_main"
-        android:name="com.example.motionpath.ui.main.MainFragment"
-        android:label="@string/title_main"
-        tools:layout="@layout/fragment_main" />
+        android:id="@+id/navigation_schedule"
+        android:name="com.example.motionpath.ui.schedule.ScheduleFragment"
+        android:label="@string/title_schedule"
+        tools:layout="@layout/fragment_schedule">
+        <action
+            android:id="@+id/action_navigation_main_to_navigation_create_session"
+            app:destination="@id/navigation_create_session" />
+        <action
+            android:id="@+id/action_navigation_main_to_searchFragment"
+            app:destination="@id/searchFragment" />
+    </fragment>
 
     <fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="com.example.motionpath.ui.dashboard.DashboardFragment"
-        android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        android:id="@+id/navigation_exercise"
+        android:name="com.example.motionpath.ui.exercise.ExerciseFragment"
+        android:label="@string/title_exercise"
+        tools:layout="@layout/fragment_exercise">
+        <action
+            android:id="@+id/action_navigation_exercise_to_searchFragment"
+            app:destination="@id/searchFragment" />
+        <action
+            android:id="@+id/action_navigation_exercise_to_createExerciseFragment"
+            app:destination="@id/createExerciseFragment" />
+    </fragment>
 
     <fragment
-        android:id="@+id/navigation_notifications"
-        android:name="com.example.motionpath.ui.notifications.NotificationsFragment"
-        android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_notifications" />
+        android:id="@+id/navigation_clients"
+        android:name="com.example.motionpath.ui.clients.ClientsFragment"
+        android:label="ClientsFragment">
+        <action
+            android:id="@+id/action_clientsFragment_to_searchFragment"
+            app:destination="@id/searchFragment" />
+    </fragment>
+
     <fragment
         android:id="@+id/navigation_create_session"
-        android:name="com.example.motionpath.ui.create_session.CreateSessionFragment"
+        android:name="com.example.motionpath.ui.create_train.CreateTrainFragment"
         android:label="@string/title_create_session"
-        tools:layout="@layout/fragment_create_session" />
+        tools:layout="@layout/fragment_create_session" >
+        <action
+            android:id="@+id/action_navigation_create_session_to_ExerciseFragment"
+            app:destination="@id/navigation_select_exercise" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.example.motionpath.ui.search.SearchFragment"
+        android:label="SearchFragment">
+        <action
+            android:id="@+id/action_searchFragment_to_navigation_create_session"
+            app:destination="@id/navigation_create_session" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/createExerciseFragment"
+        android:name="com.example.motionpath.ui.create_exercise.CreateExerciseFragment"
+        android:label="CreateExerciseFragment" />
+
+    <fragment
+        android:id="@+id/navigation_profile"
+        android:name="com.example.motionpath.ui.profile.ProfileFragment"
+        android:label="ProfileFragment" />
+
+    <fragment
+        android:id="@+id/navigation_select_exercise"
+        android:name="com.example.motionpath.ui.exercise.ExerciseFragment"
+        android:label="ExerciseFragment" />
+
 </navigation>
